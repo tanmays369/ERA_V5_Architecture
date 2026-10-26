@@ -1,0 +1,124 @@
+# =============================================================================
+# ERA V5 model and training configuration, version 0 (G5 Architecture)
+# =============================================================================
+# Every setting has a default value and a "# source:" comment saying where the value comes from.
+# Size values are "open": TSAI gives them on 31 Oct. harness/check_config.py checks this file.
+#
+# Source codes used below:
+#   S7 ... S14      ERA V5 course sessions, section "V5 Decisions" / "What V5 has to decide"
+#   brief           G5 week-1 brief (instructions.txt) and the CAP plan sheet
+#   call 25 Oct     G5 team call, 25 Oct 2026
+#   V4 prod         Shwetha's V4 config train_1b_prod.yaml (posted in the G5 group)
+#   refs            open MoE configs: OLMoE 1B-7B, LFM2.5 24B-A2B, MiMo-V2.6-Flash, DeepSeek V4.1 Flash,
+#                   GLM-5.3-Flash, Kimi K3 (Hugging Face config.json, read 25 Oct)
+#   KE repo         github.com/theschoolofai/kronecker-embeddings (README and code)
+# A value marked "(open: ...)" in its comment is a default that an experiment or a later decision may change.
+
+meta:
+  name: era-v5                     # source: brief
+  config_version: 0                # source: brief (config v0, due 27 Oct)
+  status: draft                    # source: brief (frozen as config v1 on 14 Nov)
+
+tokenizer:
+  name: BrahmicTokenizer-131K      # source: brief, G3 plan (BrahmicTokenizer-131K is tokenizer v0) (open: frozen tokenizer from G3, 14 Nov)
+  vocab_size: 131072               # source: S7 (V4 BrahmicTokenizer has 131,072 tokens) (open: G3 freeze, 14 Nov)
+  path: open                       # source: G3, frozen tokenizer with sha256, 14 Nov
+
+embedding:
+  type: kronecker                  # source: S7 (factored input, 93.75% saving); call 25 Oct (always test with Kronecker)
+  char_dim: 256                    # source: KE repo (byte alphabet)
+  pos_dim: 32                      # source: KE repo (production setting, D = 8,192; covers >=99.82% of tokens)
+  mode: dynamic                    # source: KE repo default (cached builds a V x D table: 4.3 GB at 131K x 8,192)
+  length_normalize: true           # source: KE repo (paper default, 1/sqrt(L))
+  z_normalize: true                # source: KE repo (paper default)
+  projection_init: normal          # source: KE repo (std = 1/sqrt(D))
+
+model:
+  num_hidden_layers: open          # source: TSAI, 31 Oct (S13 settles 96 layers so pipeline stages divide evenly)
+  hidden_size: open                # source: TSAI, 31 Oct (S8: decide the width first, then the attention geometry)
+  num_attention_heads: open        # source: TSAI, 31 Oct (follows from the width, S8)
+  num_key_value_heads: open        # source: TSAI, 31 Oct (S13 mentions 8 key-value heads; S14 reference model has 4)
+  head_dim: open                   # source: TSAI, 31 Oct (follows from the width, S8)
+  intermediate_size: open          # source: TSAI, 31 Oct (feed-forward width of the dense layers)
+  max_position_embeddings: open    # source: TSAI sets the context length per phase (plan sheet, G5 week 3)
+  first_k_dense_layers: 1          # source: refs (Kimi K3: 1, LFM2.5: 2, GLM-5.3: 3; most keep the first layers dense) (open: EXP-3)
+  hidden_act: silu                 # source: refs (SwiGLU with silu in 5 of the 6 reference configs)
+  norm_type: rmsnorm               # source: refs (all six use RMSNorm)
+  rms_norm_eps: 1.0e-5             # source: refs (OLMoE, LFM2.5, GLM-5.3)
+  dropout: 0.0                     # source: S13 (reversible layers need a deterministic forward pass)
+  initializer_range: 0.02          # source: refs (all six use 0.02)
+  tie_word_embeddings: false       # source: S9 (a Kronecker input has no dense table to tie to)
+
+attention:
+  position_encoding: rope          # source: S8 (no stored absolute position table); refs (all six use rotary positions)
+  rope_theta: 10000000             # source: refs (LFM2.5, MiMo-V2.6) (open: long-context plan, G5 week 3)
+  query_grouping: gqa              # source: S8 (GQA reduces the KV cache, but alone is not enough)
+  long_context_mechanism: linear_state   # source: S8 (V4 and Qwen3.6 chose linear state; DeepSeek chose compression) (open: EXP-4)
+  layer_schedule: DDDGDDDG         # source: S8 (the V4 schedule; the ratio was never varied) (open: EXP-4)
+  sparsity_budget: 256             # source: S8 (the V4 cap, partly set by old kernels) (open: re-measure on current kernels)
+  memory_stream: true              # source: S8 (V4 Memory Stream; whether it earns its place is open) (open: ablation at target length)
+
+moe:
+  num_experts: open                # source: TSAI, 31 Oct (S14: number of experts is open; EXP-3)
+  num_experts_per_tok: open        # source: TSAI, 31 Oct (S14 reference model uses 8; refs use 4 to 16)
+  moe_intermediate_size: open      # source: TSAI, 31 Oct (expert width; S14 reference model uses 768)
+  num_shared_experts: 1            # source: refs (DeepSeek V4.1 Flash and GLM-5.3 use 1; Kimi K3 uses 2) (open: S14, EXP-3)
+  router_scoring: sigmoid          # source: refs (GLM-5.3, MiMo-V2.6 use sigmoid scores)
+  router_dtype: float32            # source: S14 (32-bit router computation); GLM-5.3 moe_router_dtype
+  norm_topk_prob: true             # source: refs (5 of the 6 normalise the chosen experts' weights)
+  routed_scaling_factor: 1.0       # source: LFM2.5 (DeepSeek V4.1 uses 1.5, GLM-5.3 uses 2.5) (open: EXP-3)
+  balancing: expert_bias           # source: S14 (a per-expert bias used only for choosing)
+  bias_update_rate: 0.001          # source: S14 (update speed near 0.001)
+  seq_aux_loss_coef: 0.0001        # source: S14 (sequence-level loss near 0.0001)
+  load_counted_over: batch         # source: S14 (load counted across the whole batch)
+  dropless: true                   # source: S14 (no dropped tokens; grouped expert computation)
+  freeze_router_in_rl: true        # source: S14 (a frozen router during reinforcement learning)
+
+output_head:
+  type: dense                      # source: S9 (Kronecker, low-rank or dense head is open) (open: EXP-5 with G4)
+  ke2_output_shape: open           # source: G4, KE2 output shape, 27 Oct
+  loss: full_softmax               # source: S9 (the full-vocabulary softmax stays exact)
+  chunked_cross_entropy: true      # source: S9 (fused or chunked cross-entropy); V4 prod use_fused_ce
+  mtp_heads: 1                     # source: S9 (MTP is in; 3 of 4 reference architectures ship it; GLM-5.3 uses 1) (open: head count)
+  mtp_loss_weight: 0.3             # source: DeepSeek-V3 report (MTP weight 0.3 early in training) (open: EXP)
+  z_loss_coef: 0.0001              # source: PaLM (z-loss 1e-4); S9 (z-loss, soft-cap or centring is open)
+
+optimizer:
+  name: adamw                      # source: S11 (AdamW with decoupled decay) (open: AdamW or Muon for matrices, EXP-2)
+  beta1: 0.9                       # source: common LLM setting (Llama, DeepSeek-V3)
+  beta2: 0.95                      # source: common LLM setting (Llama, DeepSeek-V3)
+  eps: 1.0e-8                      # source: PyTorch AdamW default
+  weight_decay: 0.1                # source: common LLM setting (Llama, DeepSeek-V3); S11 treats lr x decay as one setting
+  no_decay_on: [norm, bias, router_bias]   # source: S11 (no decay on normalisation scales and biases)
+  grad_clip_norm: 1.0              # source: S10 (clipping on from step one) (open: threshold from the first 1,000 steps)
+  lr_schedule_file: lr_schedule.yaml     # source: V4 prod (schedule kept in its own file); call 25 Oct
+
+training:
+  seed: 1234                       # source: brief (two runs with seed 1234 give the same loss)
+  precision: bf16                  # source: S10 (bf16 is safe; fp8 and NVFP4 are open)
+  loss_normalization: per_token    # source: S10 (the loss is normalised by token, not by micro-batch)
+  grad_accumulation: true          # source: S10
+  global_batch_tokens: open        # source: TSAI, 31 Oct (V4 prod used 131,072 tokens per step)
+  sequence_length: open            # source: TSAI sets the context length per phase (plan sheet)
+  activation_checkpointing: selective    # source: S10 (everywhere or only some layers is open) (open: memory-throughput sweep)
+  data_mix_file: data_mix.yaml     # source: V4 prod (curriculum kept in its own file); call 25 Oct
+
+parallel:
+  zero_stage: 2                    # source: S12 (ZeRO-2 from 32 GPUs; ZeRO-3 from 8 is the alternative) (open: measured step time)
+  tensor_parallel: 8               # source: S13 (tensor parallelism inside a node)
+  sequence_parallel: true          # source: S13 (always with tensor parallelism)
+  expert_parallel: 8               # source: S14 (EP = 8 inside a node)
+  pipeline_parallel: 1             # source: S13 (a pipeline only if the state does not fit) (open: measured step time)
+  context_parallel: 1              # source: S13 (for the long-context stage) (open: method and degree)
+  reversible_layers: false         # source: S13 (reversible stack saves activations; checked at full width with G6 in week 3) (open)
+  log_comm_fraction: true          # source: S12 (communication time logged from the first step)
+  grad_bucketing_overlap: true     # source: S12 (bucketing and overlap enabled from the start)
+
+checkpoint:
+  interval_steps: 780              # source: V4 prod (every 780 steps, about 31 minutes)
+  keep_last_n: 3                   # source: V4 prod
+
+observability:
+  log_interval: 1                  # source: V4 prod (log_interval 1)
+  metrics: [step, loss, loss_ntp, loss_mtp, lr, tokens_per_second, gpu_alloc_gb, bits_per_byte, grad_norm, moe_aux_loss, expert_load_max, expert_load_min]   # source: call 25 Oct (first six from the V4 dashboard; the rest proposed for G8)
+  metrics_file: metrics.jsonl      # source: V4 prod (metrics_jsonl_path)

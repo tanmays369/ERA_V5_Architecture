@@ -1,0 +1,10 @@
+{
+ "config": "configs/tiny/tiny_dense.yaml",
+ "steps": 40,
+ "seed": 1234,
+ "identical": true,
+ "diff_lines": 0,
+ "loss_first": 8.574419170618057,
+ "loss_last": 6.610535979270935,
+ "finite": true
+}

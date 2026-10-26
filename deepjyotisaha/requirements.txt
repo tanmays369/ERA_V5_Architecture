@@ -1,0 +1,6 @@
+# Versions the harness was tested with (CPU). Any PyTorch 2.x should work.
+torch==2.13.0
+numpy==2.5.1
+tokenizers==0.23.2
+pyyaml==6.0.3
+pyarrow==25.0.0

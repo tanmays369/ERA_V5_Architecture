@@ -1,0 +1,10 @@
+# Learning-rate schedule for the tiny test models: the same WSD shape as lr_schedule.yaml, shortened.
+
+schedule:
+  type: wsd                        # source: S11 (same shape as the production schedule)
+  peak_lr: 3.0e-3                  # source: harness (tiny models train well at a higher rate; EXP-1 sweeps this)
+  warmup_steps: 20                 # source: harness (10% of the steps)
+  decay_fraction: 0.2              # source: harness (decay over the last 20% of a short run)
+  decay_shape: linear              # source: same as lr_schedule.yaml
+  final_lr_ratio: 0.1              # source: harness
+  total_steps: 200                 # source: harness (about a minute or two on a laptop CPU for tiny_moe)

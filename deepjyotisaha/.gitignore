@@ -1,0 +1,6 @@
+# Input text and everything the harness writes stay on your computer.
+data/*
+!data/README.md
+work/
+__pycache__/
+*.pyc

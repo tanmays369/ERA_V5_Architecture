@@ -1,0 +1,18 @@
+# Data mix for ERA V5, kept in its own file as V4 kept its curriculum. Checked by harness/check_config.py.
+# The production mix is set by TSAI; the harness sample below is what the tiny test models train on.
+
+production:
+  mix: open                        # source: TSAI sets the data mix of the first training weeks (plan sheet, Data A week 3)
+  indic_from_step: 0               # source: call 25 Oct (V4 had trouble when Indic came in late)
+
+harness_sample:
+  output_dir: ../work/sample          # source: harness (built by harness/build_sample.py; git-ignored)
+  validation_fraction: 0.05        # source: harness (last 5% of each source is held out for bits per byte)
+  english_pack: ../data/en-fineweb-edu.parquet   # source: the week-1 diagnosis pack (500 FineWeb-Edu documents); see data/README.md
+  english_share: 0.5               # source: call 25 Oct (mixed Indic and English text); about half by bytes
+  hindi_text: ../data/hi_train.txt   # source: session 2 assignment (cleaned Hindi Wikipedia text); see data/README.md
+  hindi_share: 0.25                # source: harness choice (half of the Indic share)
+  bengali_text: ../data/bn_train.txt   # source: session 2 assignment (cleaned Bengali text); see data/README.md
+  bengali_share: 0.15              # source: harness choice
+  telugu_text: ../data/te_train.txt   # source: session 2 assignment (cleaned Telugu text); see data/README.md
+  telugu_share: 0.10               # source: harness choice (smallest source, 197 KB)

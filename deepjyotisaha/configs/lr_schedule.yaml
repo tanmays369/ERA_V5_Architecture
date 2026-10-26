@@ -1,0 +1,10 @@
+# Learning-rate schedule for ERA V5, kept in its own file as V4 did. Checked by harness/check_config.py.
+
+schedule:
+  type: wsd                        # source: S11 (WSD: warm-up, stable, decay, so the run can stop, branch and continue)
+  peak_lr: 2.0e-4                  # source: V4 prod (peak 2e-4) (open: EXP-1 learning-rate sweep)
+  warmup_steps: 4000               # source: V4 prod (4,000); S11 (warm up over the first few thousand steps)
+  decay_fraction: 0.1              # source: MiniCPM WSD (decay over about the last 10% of steps) (open: EXP-1)
+  decay_shape: linear              # source: simplest choice (open: compare with other cooldown shapes in EXP-1)
+  final_lr_ratio: 0.05             # source: V4 prod (2e-4 down to 1e-5)
+  total_steps: open                # source: TSAI, 31 Oct (follows from tokens and batch size)

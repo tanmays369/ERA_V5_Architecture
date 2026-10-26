@@ -1,0 +1,42 @@
+# Tiny dense test model (version 2 of the harness). Starts from config v0 and overrides only what a
+# laptop-size test needs; every other setting and source comes from config_v0.yaml.
+inherits: ../config_v0.yaml
+
+tokenizer:
+  name: session2-bpe-en-hi-bn-te   # source: session 2 assignment tokenizer (BPE, 7,911 tokens, English, Hindi, Bengali, Telugu); test only
+  vocab_size: 7911                 # source: assets/tokenizer_session2_enhibnte.json
+  path: ../../assets/tokenizer_session2_enhibnte.json   # source: copied from session 2/assignment_2a/output/tokenizer.json
+
+embedding:
+  pos_dim: 16                      # source: KE repo paper setting (D = 4,096) for small models
+  mode: cached                     # source: KE repo (cached is right for a small vocabulary: 7,911 x 4,096 floats = 130 MB; no scatter_add, so it is deterministic on a GPU too)
+
+model:
+  num_hidden_layers: 4             # source: tiny test size (harness)
+  hidden_size: 128                 # source: tiny test size (harness)
+  num_attention_heads: 4           # source: tiny test size (harness)
+  num_key_value_heads: 2           # source: tiny test size (harness; 2 query heads per key-value head, as in GQA)
+  head_dim: 32                     # source: tiny test size (harness; hidden_size / num_attention_heads)
+  intermediate_size: 384           # source: tiny test size (harness; 3 x hidden_size)
+  max_position_embeddings: 128     # source: tiny test size (harness; equals the sequence length)
+
+moe:
+  num_experts: 0                   # source: harness (0 means dense feed-forward layers everywhere)
+  num_experts_per_tok: 2           # source: tiny test size (harness; used when num_experts > 0)
+  moe_intermediate_size: 128       # source: tiny test size (harness; used when num_experts > 0)
+
+optimizer:
+  lr_schedule_file: lr_tiny.yaml   # source: harness (short schedule for a few hundred steps)
+
+training:
+  precision: fp32                  # source: harness (CPU run; bf16 is for the GPU runs)
+  global_batch_tokens: 2048        # source: tiny test size (harness; 16 windows of 128 tokens)
+  sequence_length: 128             # source: tiny test size (harness)
+  data_mix_file: ../data_mix.yaml  # source: harness (uses the harness_sample section)
+
+harness:
+  device: cpu                      # source: harness (runs on any laptop; use --device cuda on a GPU)
+  threads: 4                       # source: harness (fixed thread count, for repeatable CPU runs)
+  micro_batch_size: 8              # source: harness (2 micro-batches per step, to exercise gradient accumulation)
+  eval_interval: 20                # source: harness (validation bits per byte every 20 steps)
+  eval_batches: 4                  # source: harness (4 fixed held-out batches)

@@ -1,0 +1,233 @@
+{
+ "config": "configs\\tiny\\tiny_moe.yaml",
+ "seed": 1234,
+ "device": "cpu",
+ "steps": 200,
+ "rows_per_step": 16,
+ "micro_batch_size": 8,
+ "sequence_length": 128,
+ "parameters": {
+  "total": 5407744,
+  "active": 3343360,
+  "embedding_projection": 524288,
+  "output_head": 1012608
+ },
+ "torch": "2.13.0+cpu",
+ "python": "3.12.10",
+ "sample_manifest": {
+  "tokenizer": "tokenizer_session2_enhibnte.json",
+  "tokenizer_sha256": "1af485fef30850c6b667409c5dd26d57909a5c3cb03b9491c46769c9ec80836e",
+  "vocab_size": 7911,
+  "validation_fraction": 0.05,
+  "sources": {
+   "english": {
+    "file": "en-fineweb-edu.parquet",
+    "sha256": "3a0ad16983c03e9d8b6a40d8e58d769d9b89e68406a3b86e79fd7b8d68e022de",
+    "share": 0.5,
+    "train_chars": 2321609,
+    "train_bytes": 2332759,
+    "train_tokens": 883318,
+    "val_chars": 122266,
+    "val_bytes": 122752,
+    "val_tokens": 46185
+   },
+   "hindi": {
+    "file": "hi_train.txt",
+    "sha256": "3938915a2c895a886b337ccd067d71344f5833243dd8fc0f33556a7e052109f9",
+    "share": 0.25,
+    "train_chars": 245589,
+    "train_bytes": 426682,
+    "train_tokens": 61672,
+    "val_chars": 16890,
+    "val_bytes": 29375,
+    "val_tokens": 4193
+   },
+   "bengali": {
+    "file": "bn_train.txt",
+    "sha256": "4e01e486529411b2eb314a3743ebb107167ad9ccf06b16b8d59baf0fa008fb78",
+    "share": 0.15,
+    "train_chars": 258435,
+    "train_bytes": 451528,
+    "train_tokens": 69557,
+    "val_chars": 14824,
+    "val_bytes": 26058,
+    "val_tokens": 3984
+   },
+   "telugu": {
+    "file": "te_train.txt",
+    "sha256": "361ba0e0d71b20ba50a7d97e66c2b19949614f48303e2b664601fe3ef8a02b8a",
+    "share": 0.1,
+    "train_chars": 98331,
+    "train_bytes": 174639,
+    "train_tokens": 26807,
+    "val_chars": 13161,
+    "val_bytes": 21515,
+    "val_tokens": 3322
+   }
+  }
+ },
+ "resolved_config": {
+  "meta": {
+   "name": "era-v5",
+   "config_version": 0,
+   "status": "draft"
+  },
+  "tokenizer": {
+   "name": "session2-bpe-en-hi-bn-te",
+   "vocab_size": 7911,
+   "path": "assets\\tokenizer_session2_enhibnte.json"
+  },
+  "embedding": {
+   "type": "kronecker",
+   "char_dim": 256,
+   "pos_dim": 16,
+   "mode": "cached",
+   "length_normalize": true,
+   "z_normalize": true,
+   "projection_init": "normal"
+  },
+  "model": {
+   "num_hidden_layers": 4,
+   "hidden_size": 128,
+   "num_attention_heads": 4,
+   "num_key_value_heads": 2,
+   "head_dim": 32,
+   "intermediate_size": 384,
+   "max_position_embeddings": 128,
+   "first_k_dense_layers": 1,
+   "hidden_act": "silu",
+   "norm_type": "rmsnorm",
+   "rms_norm_eps": 1e-05,
+   "dropout": 0.0,
+   "initializer_range": 0.02,
+   "tie_word_embeddings": false
+  },
+  "attention": {
+   "position_encoding": "rope",
+   "rope_theta": 10000000,
+   "query_grouping": "gqa",
+   "long_context_mechanism": "linear_state",
+   "layer_schedule": "DDDGDDDG",
+   "sparsity_budget": 256,
+   "memory_stream": true
+  },
+  "moe": {
+   "num_experts": 16,
+   "num_experts_per_tok": 2,
+   "moe_intermediate_size": 128,
+   "num_shared_experts": 1,
+   "router_scoring": "sigmoid",
+   "router_dtype": "float32",
+   "norm_topk_prob": true,
+   "routed_scaling_factor": 1.0,
+   "balancing": "expert_bias",
+   "bias_update_rate": 0.01,
+   "seq_aux_loss_coef": 0.0001,
+   "load_counted_over": "batch",
+   "dropless": true,
+   "freeze_router_in_rl": true
+  },
+  "output_head": {
+   "type": "dense",
+   "ke2_output_shape": "open",
+   "loss": "full_softmax",
+   "chunked_cross_entropy": true,
+   "mtp_heads": 1,
+   "mtp_loss_weight": 0.3,
+   "z_loss_coef": 0.0001
+  },
+  "optimizer": {
+   "name": "adamw",
+   "beta1": 0.9,
+   "beta2": 0.95,
+   "eps": 1e-08,
+   "weight_decay": 0.1,
+   "no_decay_on": [
+    "norm",
+    "bias",
+    "router_bias"
+   ],
+   "grad_clip_norm": 1.0,
+   "lr_schedule_file": "configs\\tiny\\lr_tiny.yaml"
+  },
+  "training": {
+   "seed": 1234,
+   "precision": "fp32",
+   "loss_normalization": "per_token",
+   "grad_accumulation": true,
+   "global_batch_tokens": 2048,
+   "sequence_length": 128,
+   "activation_checkpointing": "selective",
+   "data_mix_file": "configs\\data_mix.yaml"
+  },
+  "parallel": {
+   "zero_stage": 2,
+   "tensor_parallel": 8,
+   "sequence_parallel": true,
+   "expert_parallel": 8,
+   "pipeline_parallel": 1,
+   "context_parallel": 1,
+   "reversible_layers": false,
+   "log_comm_fraction": true,
+   "grad_bucketing_overlap": true
+  },
+  "checkpoint": {
+   "interval_steps": 780,
+   "keep_last_n": 3
+  },
+  "observability": {
+   "log_interval": 1,
+   "metrics": [
+    "step",
+    "loss",
+    "loss_ntp",
+    "loss_mtp",
+    "lr",
+    "tokens_per_second",
+    "gpu_alloc_gb",
+    "bits_per_byte",
+    "grad_norm",
+    "moe_aux_loss",
+    "expert_load_max",
+    "expert_load_min"
+   ],
+   "metrics_file": "configs\\metrics.jsonl"
+  },
+  "harness": {
+   "device": "cpu",
+   "threads": 4,
+   "micro_batch_size": 8,
+   "eval_interval": 20,
+   "eval_batches": 4
+  },
+  "lr_schedule": {
+   "schedule": {
+    "type": "wsd",
+    "peak_lr": 0.003,
+    "warmup_steps": 20,
+    "decay_fraction": 0.2,
+    "decay_shape": "linear",
+    "final_lr_ratio": 0.1,
+    "total_steps": 200
+   }
+  },
+  "data_mix": {
+   "production": {
+    "mix": "open",
+    "indic_from_step": 0
+   },
+   "harness_sample": {
+    "output_dir": "work\\sample",
+    "validation_fraction": 0.05,
+    "english_pack": "data\\en-fineweb-edu.parquet",
+    "english_share": 0.5,
+    "hindi_text": "data\\hi_train.txt",
+    "hindi_share": 0.25,
+    "bengali_text": "data\\bn_train.txt",
+    "bengali_share": 0.15,
+    "telugu_text": "data\\te_train.txt",
+    "telugu_share": 0.1
+   }
+  }
+ }
+}

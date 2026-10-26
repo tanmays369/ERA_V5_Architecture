@@ -1,0 +1,52 @@
+{
+ "tokenizer": "tokenizer_session2_enhibnte.json",
+ "tokenizer_sha256": "1af485fef30850c6b667409c5dd26d57909a5c3cb03b9491c46769c9ec80836e",
+ "vocab_size": 7911,
+ "validation_fraction": 0.05,
+ "sources": {
+  "english": {
+   "file": "en-fineweb-edu.parquet",
+   "sha256": "3a0ad16983c03e9d8b6a40d8e58d769d9b89e68406a3b86e79fd7b8d68e022de",
+   "share": 0.5,
+   "train_chars": 2321609,
+   "train_bytes": 2332759,
+   "train_tokens": 883318,
+   "val_chars": 122266,
+   "val_bytes": 122752,
+   "val_tokens": 46185
+  },
+  "hindi": {
+   "file": "hi_train.txt",
+   "sha256": "3938915a2c895a886b337ccd067d71344f5833243dd8fc0f33556a7e052109f9",
+   "share": 0.25,
+   "train_chars": 245589,
+   "train_bytes": 426682,
+   "train_tokens": 61672,
+   "val_chars": 16890,
+   "val_bytes": 29375,
+   "val_tokens": 4193
+  },
+  "bengali": {
+   "file": "bn_train.txt",
+   "sha256": "4e01e486529411b2eb314a3743ebb107167ad9ccf06b16b8d59baf0fa008fb78",
+   "share": 0.15,
+   "train_chars": 258435,
+   "train_bytes": 451528,
+   "train_tokens": 69557,
+   "val_chars": 14824,
+   "val_bytes": 26058,
+   "val_tokens": 3984
+  },
+  "telugu": {
+   "file": "te_train.txt",
+   "sha256": "361ba0e0d71b20ba50a7d97e66c2b19949614f48303e2b664601fe3ef8a02b8a",
+   "share": 0.1,
+   "train_chars": 98331,
+   "train_bytes": 174639,
+   "train_tokens": 26807,
+   "val_chars": 13161,
+   "val_bytes": 21515,
+   "val_tokens": 3322
+  }
+ }
+}

@@ -1,0 +1,5 @@
+Vendored from https://github.com/theschoolofai/kronecker-embeddings
+commit d07cb543f03d7a72a7c35bc68cfb795bcb02e1ec (src/kronecker_embeddings/, unmodified), 2026-10-25
+Licence: Apache 2.0 (LICENSE in this folder).
+Reason: pip on this machine uses a company feed without this package; the code is pure PyTorch + NumPy.
+If 'pip install kronecker-embeddings' works for you, the harness uses the installed package instead.
