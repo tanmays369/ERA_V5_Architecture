@@ -1,0 +1,6 @@
+# Name: Revant Gupta
+# Pack: ind-hi-fw2
+# R2: tensor parallel on 2xT4.
+extends: t4_base.yaml                 # parent config, deep-merged (contract small configs)
+parallelism:
+  tp: 2                                # R2 TP over 2xT4 (contract run matrix)

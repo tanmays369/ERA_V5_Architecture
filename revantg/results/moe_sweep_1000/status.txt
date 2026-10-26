@@ -1,0 +1,12 @@
+check D0_dense exit=0
+=== D0_dense exit=0
+check M1_e4k2 exit=0
+=== M1_e4k2 exit=0
+check M2_e8k2 exit=0
+=== M2_e8k2 exit=0
+check M3_e16k4_fine exit=0
+=== M3_e16k4_fine exit=0
+check M4_e8k1_shared1 exit=0
+=== M4_e8k1_shared1 exit=0
+check M5_e8k2_nobias exit=0
+=== M5_e8k2_nobias exit=1

@@ -1,0 +1,16 @@
+=== R0 exit=0
+=== R1a exit=0
+=== R1b exit=0
+=== R2a exit=0
+=== R2b exit=0
+=== R3a exit=0
+=== R3b exit=0
+=== R4 exit=0
+=== R5 exit=1
+resume from /kaggle/working/results/R5/checkpoints/step_000100
+=== R5r exit=0
+=== R6a exit=0
+=== R6b exit=0
+=== R7a exit=0
+=== R7b exit=0
+=== R8 exit=0

@@ -1,0 +1,357 @@
+{
+ "config": {
+  "general": {
+   "project": "era-v5-arch",
+   "run": null,
+   "seed": 1234,
+   "deterministic": true
+  },
+  "tokenizer": {
+   "name": "theschoolofai/BrahmicTokenizer-131K",
+   "revision": "7dfcf398172c825c6689ad578e8b484ca5f57bc9",
+   "url": "https://raw.githubusercontent.com/theschoolofai/BrahmicTokenizer-131K/7dfcf398172c825c6689ad578e8b484ca5f57bc9/tokenizer.json",
+   "sha256": "01d968a7970b029c071b29f060abf6104b66168dedf2ff3b1a0290a545739fff",
+   "vocab_size": 131072,
+   "eos_id": 36
+  },
+  "embedding": {
+   "type": "kronecker",
+   "char_dim": 256,
+   "pos_dim": 32,
+   "mode": "dynamic",
+   "projection_trainable": true,
+   "weight_decay": 0.0,
+   "ke2_output_shape": null
+  },
+  "model": {
+   "n_layers": 4,
+   "d_model": 256,
+   "n_heads": 4,
+   "n_kv_heads": 2,
+   "d_ff": 768,
+   "ffn": "swiglu",
+   "norm": "rmsnorm",
+   "norm_position": "pre",
+   "norm_eps": 1e-06,
+   "position": "rope",
+   "rope_theta": 50000,
+   "qk_norm": true,
+   "bias": false,
+   "dropout": 0.0,
+   "tie_embeddings": false,
+   "init_std": 0.02,
+   "norm_gain_init": 1.0
+  },
+  "moe": {
+   "enabled": false,
+   "num_experts": null,
+   "top_k": null,
+   "shared_experts": 0,
+   "router_dtype": "fp32",
+   "balancing": "aux_free_bias",
+   "bias_update_speed": 0.001,
+   "seq_aux_loss_coef": 0.0001,
+   "dropless": true
+  },
+  "head": {
+   "loss": "cross_entropy",
+   "z_loss_coef": 0.0001,
+   "mtp_heads": 0
+  },
+  "optimizer": {
+   "matrices_2d": "muon",
+   "other_params": "adamw",
+   "lr": 0.0003,
+   "adam_betas": [
+    0.9,
+    0.999
+   ],
+   "adam_eps": 1e-08,
+   "weight_decay": 0.1,
+   "muon_momentum": 0.95,
+   "muon_nesterov": true,
+   "muon_ns_steps": 5,
+   "muon_ns_dtype": "fp32",
+   "muon_adjust_lr": "match_rms_adamw",
+   "no_decay": [
+    "norm",
+    "bias",
+    "embedding"
+   ],
+   "grad_clip": 1.0,
+   "activation_grad_clip": false
+  },
+  "schedule": {
+   "type": "wsd",
+   "warmup_frac": 0.02,
+   "decay_frac": 0.1,
+   "min_lr_ratio": 0.0
+  },
+  "tokens": {
+   "seq_len": 256,
+   "global_batch_seqs": 16,
+   "micro_batch_seqs": 4,
+   "train_steps": 300
+  },
+  "precision": "fp32",
+  "parallelism": {
+   "dp": 1,
+   "tp": 1,
+   "pp": 1,
+   "pp_engine": "1f1b",
+   "pp_microbatches": 4,
+   "tp_mode": "all_reduce",
+   "zero_stage": 0,
+   "recompute_layer": false,
+   "expert_parallel_size": 1,
+   "context_parallel_size": 1
+  },
+  "datasets": [
+   {
+    "name": "fineweb_edu",
+    "hf": "HuggingFaceFW/fineweb-edu",
+    "subset": "sample-10BT",
+    "split": "train",
+    "text_field": "text"
+   },
+   {
+    "name": "dclm",
+    "hf": "mlfoundations/dclm-baseline-1.0",
+    "subset": null,
+    "split": "train",
+    "text_field": "text"
+   },
+   {
+    "name": "finemath",
+    "hf": "HuggingFaceTB/finemath",
+    "subset": "finemath-3plus",
+    "split": "train",
+    "text_field": "text"
+   },
+   {
+    "name": "code",
+    "hf": "codeparrot/codeparrot-clean",
+    "subset": null,
+    "split": "train",
+    "text_field": "content"
+   },
+   {
+    "name": "hin",
+    "hf": "HuggingFaceFW/fineweb-2",
+    "subset": "hin_Deva",
+    "split": "train",
+    "text_field": "text"
+   },
+   {
+    "name": "ben",
+    "hf": "HuggingFaceFW/fineweb-2",
+    "subset": "ben_Beng",
+    "split": "train",
+    "text_field": "text"
+   },
+   {
+    "name": "tam",
+    "hf": "HuggingFaceFW/fineweb-2",
+    "subset": "tam_Taml",
+    "split": "train",
+    "text_field": "text"
+   },
+   {
+    "name": "tel",
+    "hf": "HuggingFaceFW/fineweb-2",
+    "subset": "tel_Telu",
+    "split": "train",
+    "text_field": "text"
+   },
+   {
+    "name": "kan",
+    "hf": "HuggingFaceFW/fineweb-2",
+    "subset": "kan_Knda",
+    "split": "train",
+    "text_field": "text"
+   },
+   {
+    "name": "mal",
+    "hf": "HuggingFaceFW/fineweb-2",
+    "subset": "mal_Mlym",
+    "split": "train",
+    "text_field": "text"
+   },
+   {
+    "name": "mar",
+    "hf": "HuggingFaceFW/fineweb-2",
+    "subset": "mar_Deva",
+    "split": "train",
+    "text_field": "text"
+   },
+   {
+    "name": "guj",
+    "hf": "HuggingFaceFW/fineweb-2",
+    "subset": "guj_Gujr",
+    "split": "train",
+    "text_field": "text"
+   }
+  ],
+  "data": {
+   "docs_per_source": 500,
+   "heldout_docs_per_source": 20
+  },
+  "data_stages": [
+   {
+    "name": "stable",
+    "start_frac": 0.0,
+    "weights": {
+     "fineweb_edu": 0.22,
+     "dclm": 0.18,
+     "code": 0.22,
+     "finemath": 0.08,
+     "hin": 0.1,
+     "ben": 0.04,
+     "tam": 0.03,
+     "tel": 0.03,
+     "kan": 0.03,
+     "mal": 0.025,
+     "mar": 0.025,
+     "guj": 0.02
+    }
+   },
+   {
+    "name": "stage2",
+    "start_frac": 0.73,
+    "weights": {
+     "fineweb_edu": 0.19,
+     "dclm": 0.15,
+     "code": 0.26,
+     "finemath": 0.12,
+     "hin": 0.09,
+     "ben": 0.04,
+     "tam": 0.03,
+     "tel": 0.03,
+     "kan": 0.03,
+     "mal": 0.02,
+     "mar": 0.02,
+     "guj": 0.02
+    }
+   },
+   {
+    "name": "anneal",
+    "start_frac": 0.82,
+    "weights": {
+     "fineweb_edu": 0.2,
+     "dclm": 0.1,
+     "code": 0.28,
+     "finemath": 0.14,
+     "hin": 0.09,
+     "ben": 0.04,
+     "tam": 0.03,
+     "tel": 0.03,
+     "kan": 0.03,
+     "mal": 0.02,
+     "mar": 0.02,
+     "guj": 0.02
+    }
+   }
+  ],
+  "safety": {
+   "on_nan": "stop",
+   "checkpoint_after_nan": false,
+   "spike_sigma": 7,
+   "spike_window": 1000,
+   "ema_alpha": 0.97,
+   "ema_z_threshold": 2.5
+  },
+  "freeze": {
+   "frozen_parts": [],
+   "hash_frozen_weights": true
+  },
+  "logging": {
+   "format": "jsonl",
+   "scalars_every": 1,
+   "per_layer_every": 10,
+   "eval_every": 50,
+   "metrics": [
+    "loss",
+    "loss_ntp",
+    "loss_mtp",
+    "lr",
+    "tokens_per_second",
+    "gpu_alloc_gb",
+    "z_loss",
+    "held_out_loss",
+    "bpb",
+    "grad_norm",
+    "update_to_weight_ratio",
+    "max_attn_logit",
+    "spike_score",
+    "ema_z",
+    "step_time_ms",
+    "dead_experts",
+    "top_expert_share"
+   ]
+  },
+  "checkpoint": {
+   "every_steps": 100,
+   "strict_load": true,
+   "keep_last": 2
+  },
+  "paths": {
+   "tokenizer": "work/tokenizer/tokenizer.json",
+   "data": "work/data/t4",
+   "runs": "work/runs"
+  },
+  "open_keys": [
+   "model.n_layers",
+   "model.d_model",
+   "model.n_heads",
+   "model.n_kv_heads",
+   "model.d_ff",
+   "moe.num_experts",
+   "moe.top_k",
+   "tokens.seq_len",
+   "tokens.global_batch_seqs",
+   "tokens.micro_batch_seqs",
+   "tokens.train_steps",
+   "data.docs_per_source",
+   "data.heldout_docs_per_source",
+   "logging.eval_every",
+   "embedding.ke2_output_shape"
+  ]
+ },
+ "derived": {
+  "world_size": 1,
+  "grad_accum": 4,
+  "head_dim": 64,
+  "stage_bounds": [
+   0,
+   219,
+   245
+  ]
+ },
+ "argv": [
+  "teams/05-architecture/harness/train.py",
+  "--device",
+  "cuda",
+  "--config",
+  "teams/05-architecture/configs/small/t4x1_ref.yaml",
+  "--out",
+  "/kaggle/working/results/R0"
+ ],
+ "torch": "2.11.0+cu128",
+ "python": "3.13.15",
+ "cuda": "12.8",
+ "devices": [
+  "Tesla T4",
+  "Tesla T4"
+ ],
+ "layout": {
+  "world": 1,
+  "pp": 1,
+  "dp": 1,
+  "tp": 1,
+  "backend": "nccl",
+  "zero_stage": 0,
+  "grad_accum": 4
+ },
+ "data_manifest_sha256": "4cecbb29efb412f6836a1ea5447be24133867c4f271efa0aff9f28c08af2ff7c",
+ "frozen_sha256": null
+}

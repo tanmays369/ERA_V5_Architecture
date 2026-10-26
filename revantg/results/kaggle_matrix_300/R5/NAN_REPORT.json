@@ -1,0 +1,9 @@
+{
+ "step": 150,
+ "loss": "nan",
+ "loss_ntp": "7.85325813293457",
+ "grad_norm": "nan",
+ "injected": true,
+ "last_good_checkpoint": "/kaggle/working/results/R5/checkpoints/step_000100",
+ "resume_command": "torchrun --nproc_per_node=2 teams/05-architecture/harness/train.py --device cuda --config teams/05-architecture/configs/small/t4x2_dp2.yaml --out /kaggle/working/results/R5 --resume /kaggle/working/results/R5/checkpoints/step_000100"
+}

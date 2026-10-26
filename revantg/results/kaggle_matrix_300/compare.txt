@@ -1,0 +1,38 @@
+step0 CE 11.843700408935547 vs ln(131072) 11.7835
+mean CE first 30: 11.150154  last 30: 7.009135  steps 300
+gate R0 exit=0
+step0 CE 11.843700408935547 vs ln(131072) 11.7835
+mean CE first 30: 11.150154  last 30: 7.009135  steps 300
+gate R1a exit=0
+step0 CE 11.821328163146973 vs ln(131072) 11.7835
+mean CE first 30: 11.139490  last 30: 7.020793  steps 300
+gate R6a exit=0
+step0 CE 11.821328163146973 vs ln(131072) 11.7835
+mean CE first 30: 11.139490  last 30: 7.020843  steps 300
+gate R7a exit=0
+exact: 300 steps byte-identical
+exact R1 exit=0
+exact: 300 steps byte-identical
+exact R2 exit=0
+exact: 300 steps byte-identical
+exact R3 exit=0
+exact: 300 steps byte-identical
+exact R6 exit=0
+exact: 300 steps byte-identical
+exact R7 exit=0
+exact: 300 steps byte-identical
+exact R1a-R5resumed exit=0
+300 common steps; max abs diff 1.907e-06; max rel diff 1.805e-07 at step 24 (10.56662368774414 vs 10.566625595092773)
+rtol R0-R1a exit=0
+300 common steps; max abs diff 1.907e-06; max rel diff 1.954e-07 at step 34 (9.75918960571289 vs 9.759191513061523)
+rtol R0-R2a exit=0
+300 common steps; max abs diff 9.537e-07; max rel diff 1.459e-07 at step 291 (6.534770965576172 vs 6.534771919250488)
+rtol R0-R3a exit=0
+300 common steps; max abs diff 1.907e-06; max rel diff 1.805e-07 at step 24 (10.56662368774414 vs 10.566625595092773)
+rtol R0-R4 exit=0
+300 common steps; max abs diff 0.000e+00; max rel diff 0.000e+00 at step 0 (11.843700408935547 vs 11.843700408935547)
+rtol R1a-R4 exit=0
+300 common steps; max abs diff 6.618e-04; max rel diff 9.256e-05 at step 292 (7.149585247039795 vs 7.150247097015381)
+rtol R6a-R7a exit=0
+300 common steps; max abs diff 5.932e-04; max rel diff 8.361e-05 at step 250 (7.037384986877441 vs 7.037973403930664)
+rtol R6a-R8 exit=0

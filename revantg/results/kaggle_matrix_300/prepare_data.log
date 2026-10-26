@@ -1,0 +1,18 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+fineweb_edu: docs 20+500, tokens val 14961 train 466980, 5.0s
+dclm: docs 20+500, tokens val 11892 train 615215, 17.2s
+finemath: docs 20+500, tokens val 35332 train 1690388, 5.7s
+code: docs 20+500, tokens val 128459 train 1269448, 4.3s
+hin: docs 20+500, tokens val 13748 train 365417, 6.8s
+ben: docs 20+500, tokens val 27869 train 563497, 7.1s
+tam: docs 20+500, tokens val 24569 train 735058, 7.0s
+tel: docs 20+500, tokens val 59935 train 1007815, 7.4s
+kan: docs 20+500, tokens val 26660 train 604522, 6.9s
+mal: docs 20+500, tokens val 26220 train 622430, 7.1s
+mar: docs 20+500, tokens val 26703 train 434220, 6.6s
+guj: docs 20+500, tokens val 28968 train 636504, 6.9s
+byte_buffers: vocab 131072, 1326 tokens decode to U+FFFD (partial UTF-8, kept per paper), max decoded byte length 32, 11 tokens fill all 32 positions
+
+real	1m40.231s
+user	1m12.694s
+sys	0m3.381s

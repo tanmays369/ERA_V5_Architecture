@@ -1,0 +1,161 @@
+{
+ "tokenizer_sha256": "01d968a7970b029c071b29f060abf6104b66168dedf2ff3b1a0290a545739fff",
+ "datasets": {
+  "fineweb_edu": {
+   "hf": "HuggingFaceFW/fineweb-edu",
+   "subset": "sample-10BT",
+   "docs": [
+    20,
+    500
+   ],
+   "train_tokens": 466980,
+   "val_tokens": 14961,
+   "val_bytes": 72973,
+   "train_sha256": "5e8dbdd5c81cc77a3d27036815c0256cc3d8e2625546e2ae15c112c76d58d258",
+   "val_sha256": "55cf6ab969ed6622ea01819ea18dbfd774c2955ebf77cebd171a5d1b78149669"
+  },
+  "dclm": {
+   "hf": "mlfoundations/dclm-baseline-1.0",
+   "subset": null,
+   "docs": [
+    20,
+    500
+   ],
+   "train_tokens": 615215,
+   "val_tokens": 11892,
+   "val_bytes": 52267,
+   "train_sha256": "43989d4be25782013be1645a7bf13953ae12f64fa9168e3d66ec125cc6ba6fb0",
+   "val_sha256": "65db8bea7ec46a19a83f0754cf9556e29154d18e56922bdf27177ed32c00355a"
+  },
+  "finemath": {
+   "hf": "HuggingFaceTB/finemath",
+   "subset": "finemath-3plus",
+   "docs": [
+    20,
+    500
+   ],
+   "train_tokens": 1690388,
+   "val_tokens": 35332,
+   "val_bytes": 115118,
+   "train_sha256": "363031dd2d3d30009e50031d5ab23f983662c12dac05101f3a7383ba00340d82",
+   "val_sha256": "bdc3df6ed2d29c1c96f6c0721773620bc5cca83a9533e9376c5ef716331955c4"
+  },
+  "code": {
+   "hf": "codeparrot/codeparrot-clean",
+   "subset": null,
+   "docs": [
+    20,
+    500
+   ],
+   "train_tokens": 1269448,
+   "val_tokens": 128459,
+   "val_bytes": 506831,
+   "train_sha256": "7fc2d1b4ce51cef01922a7eeaf01681a6cf6fb021a8f9d8057616b8f97eb9d98",
+   "val_sha256": "316493960e7128b7ea34db166b71f29d5e90a23435499ebe7925fef4d504d660"
+  },
+  "hin": {
+   "hf": "HuggingFaceFW/fineweb-2",
+   "subset": "hin_Deva",
+   "docs": [
+    20,
+    500
+   ],
+   "train_tokens": 365417,
+   "val_tokens": 13748,
+   "val_bytes": 110682,
+   "train_sha256": "c8eec5e9f313b6186875783d041a7317a2de71e973a8e41155a9c3abca3d4494",
+   "val_sha256": "cfa8b2d7dc6b678273e3d77457b3056d3b6225957d33bee7f5900bd3030a7b64"
+  },
+  "ben": {
+   "hf": "HuggingFaceFW/fineweb-2",
+   "subset": "ben_Beng",
+   "docs": [
+    20,
+    500
+   ],
+   "train_tokens": 563497,
+   "val_tokens": 27869,
+   "val_bytes": 208550,
+   "train_sha256": "8b2cbaf67bab72da33f95e79aa3a7b657e56d4479c0d5a6a3eb67850eb56e54d",
+   "val_sha256": "42722d31cbbdf1a23f5a5003c2a8a80fe2cbfa7e8057fe593c7ee871d661df0f"
+  },
+  "tam": {
+   "hf": "HuggingFaceFW/fineweb-2",
+   "subset": "tam_Taml",
+   "docs": [
+    20,
+    500
+   ],
+   "train_tokens": 735058,
+   "val_tokens": 24569,
+   "val_bytes": 189493,
+   "train_sha256": "ce5daa015cce739812982e0cdbcff577b07f03859dd0e8486bbd9dea1ee56df3",
+   "val_sha256": "a2d0a73a6e30e1be5b6c0b282ec3243e3b548c08eaefa21b0c1af67567c7fa28"
+  },
+  "tel": {
+   "hf": "HuggingFaceFW/fineweb-2",
+   "subset": "tel_Telu",
+   "docs": [
+    20,
+    500
+   ],
+   "train_tokens": 1007815,
+   "val_tokens": 59935,
+   "val_bytes": 370290,
+   "train_sha256": "7ba701de390d40fef267808550c46dfc6b114ccc1f216c5ae0a7fc82cf436688",
+   "val_sha256": "4a3b0431a27b50a0d12afe00277ab6d0f0af842bdfa7838fccfd8a2fc745adfe"
+  },
+  "kan": {
+   "hf": "HuggingFaceFW/fineweb-2",
+   "subset": "kan_Knda",
+   "docs": [
+    20,
+    500
+   ],
+   "train_tokens": 604522,
+   "val_tokens": 26660,
+   "val_bytes": 187939,
+   "train_sha256": "881fcf25ae8c1fd526778c338d2fe3f9af593e1a3dc0eb44288dea158093ed8a",
+   "val_sha256": "81bd46bfdd9aba320e9df483472b78f9f79bdafdfad46b3d5b0fe09cc2581522"
+  },
+  "mal": {
+   "hf": "HuggingFaceFW/fineweb-2",
+   "subset": "mal_Mlym",
+   "docs": [
+    20,
+    500
+   ],
+   "train_tokens": 622430,
+   "val_tokens": 26220,
+   "val_bytes": 201233,
+   "train_sha256": "facfbdd4ec86ee77761963249ad5a806b56eddc6eb4f0841e2c55297716af249",
+   "val_sha256": "f019aca551683755d8369a8c0f7072d8f8c417fb53d7f0bc6355cdbce6959aab"
+  },
+  "mar": {
+   "hf": "HuggingFaceFW/fineweb-2",
+   "subset": "mar_Deva",
+   "docs": [
+    20,
+    500
+   ],
+   "train_tokens": 434220,
+   "val_tokens": 26703,
+   "val_bytes": 189028,
+   "train_sha256": "8be11427f07e8d67724a63b85d00e5faa5058afe5b5158372ebf501909cf004b",
+   "val_sha256": "57c5f00f02f649c407b005135bbb066e5728b11ddb2982b2076cf29e9fb63e5d"
+  },
+  "guj": {
+   "hf": "HuggingFaceFW/fineweb-2",
+   "subset": "guj_Gujr",
+   "docs": [
+    20,
+    500
+   ],
+   "train_tokens": 636504,
+   "val_tokens": 28968,
+   "val_bytes": 198615,
+   "train_sha256": "e2f130eb06d16c9a1a7e4df41d8d35e40edcadf5858a8220e39f32196e173c07",
+   "val_sha256": "c99cbb9c77d0347635171b5d3461aed7166f09f099d09f88459a2b444f3d06db"
+  }
+ }
+}

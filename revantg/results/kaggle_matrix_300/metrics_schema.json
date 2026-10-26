@@ -1,0 +1,122 @@
+[
+ {
+  "name": "step",
+  "unit": "count",
+  "cadence": "every step",
+  "source": "optimizer steps completed before this one"
+ },
+ {
+  "name": "stage",
+  "unit": "name",
+  "cadence": "every step",
+  "source": "data_stages entry active at this step"
+ },
+ {
+  "name": "loss",
+  "unit": "nats/token",
+  "cadence": "every step",
+  "source": "total = loss_ntp + z_loss, mean over the global batch"
+ },
+ {
+  "name": "loss_ntp",
+  "unit": "nats/token",
+  "cadence": "every step",
+  "source": "next-token cross-entropy, mean over the global batch (losses.tsv)"
+ },
+ {
+  "name": "loss_mtp",
+  "unit": "nats/token",
+  "cadence": "every step",
+  "source": "reserved, MTP off in v0 (head.mtp_heads 0): always null"
+ },
+ {
+  "name": "z_loss",
+  "unit": "nats/token",
+  "cadence": "every step",
+  "source": "z_loss_coef * mean(logsumexp(logits)^2)"
+ },
+ {
+  "name": "grad_norm",
+  "unit": "L2",
+  "cadence": "every step",
+  "source": "global grad norm before clipping (all shards and stages)"
+ },
+ {
+  "name": "lr",
+  "unit": "1",
+  "cadence": "every step",
+  "source": "WSD schedule optim.lr_at, applied to all param groups"
+ },
+ {
+  "name": "tokens_per_second",
+  "unit": "tokens/s",
+  "cadence": "every step",
+  "source": "global_batch_seqs*seq_len / step wall time"
+ },
+ {
+  "name": "step_time_ms",
+  "unit": "ms",
+  "cadence": "every step",
+  "source": "wall time of the step on rank 0 (incl. comm, excl. eval/checkpoint)"
+ },
+ {
+  "name": "gpu_alloc_gb",
+  "unit": "GB",
+  "cadence": "every step",
+  "source": "torch.cuda.memory_allocated()/1e9 on rank 0; 0 on CPU"
+ },
+ {
+  "name": "spike_score",
+  "unit": "sigma",
+  "cadence": "every step",
+  "source": "(loss - mean)/std over the last safety.spike_window losses; null < 10"
+ },
+ {
+  "name": "ema_z",
+  "unit": "sigma",
+  "cadence": "every step",
+  "source": "(loss - EMA)/sqrt(EMA var), alpha safety.ema_alpha; null at step 0"
+ },
+ {
+  "name": "update_to_weight_ratio",
+  "unit": "1",
+  "cadence": "every logging.per_layer_every",
+  "source": "||w_after - w_before|| / ||w_before||, all params"
+ },
+ {
+  "name": "max_attn_logit",
+  "unit": "logit",
+  "cadence": "every logging.per_layer_every",
+  "source": "max |q.k|/sqrt(hd) over layers, last micro-batch"
+ },
+ {
+  "name": "held_out_loss",
+  "unit": "nats/token",
+  "cadence": "every logging.eval_every",
+  "source": "CE on data.val_batch() after the step"
+ },
+ {
+  "name": "bpb",
+  "unit": "bits/byte",
+  "cadence": "every logging.eval_every",
+  "source": "held_out_loss / ln2 / val bytes per token (manifest)"
+ },
+ {
+  "name": "dead_experts",
+  "unit": "count",
+  "cadence": "every step (MoE only)",
+  "source": "experts with 0 routed tokens this step, summed over MoE layers"
+ },
+ {
+  "name": "top_expert_share",
+  "unit": "1",
+  "cadence": "every step (MoE only)",
+  "source": "max over MoE layers of the busiest expert's token share"
+ },
+ {
+  "name": "moe_aux",
+  "unit": "nats/token",
+  "cadence": "every step (MoE only)",
+  "source": "seq-wise aux loss (coef applied), last micro-batch, summed over layers; in the gradient, not in `loss`"
+ }
+]

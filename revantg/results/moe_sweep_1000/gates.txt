@@ -1,0 +1,19 @@
+step0 CE 11.843700408935547 vs ln(131072) 11.7835
+mean CE first 100: 9.790893  last 100: 5.611978  steps 1000
+gate D0_dense exit=0
+step0 CE 11.821328163146973 vs ln(131072) 11.7835
+mean CE first 100: 9.786341  last 100: 5.596944  steps 1000
+gate M1_e4k2 exit=0
+step0 CE 11.843948364257812 vs ln(131072) 11.7835
+mean CE first 100: 9.822910  last 100: 5.573094  steps 1000
+gate M2_e8k2 exit=0
+step0 CE 11.846330642700195 vs ln(131072) 11.7835
+mean CE first 100: 9.808153  last 100: 5.596093  steps 1000
+gate M3_e16k4_fine exit=0
+step0 CE 11.823782920837402 vs ln(131072) 11.7835
+mean CE first 100: 9.792550  last 100: 5.571914  steps 1000
+gate M4_e8k1_shared1 exit=0
+step0 CE 11.843948364257812 vs ln(131072) 11.7835
+mean CE first 1: 11.843948  last 1: 11.843948  steps 1
+FAIL loss did not fall
+gate M5_e8k2_nobias exit=1

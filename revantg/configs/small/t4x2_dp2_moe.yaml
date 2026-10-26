@@ -1,0 +1,6 @@
+# Name: Revant Gupta
+# Pack: ind-hi-fw2
+# MoE with data parallel on 2xT4.
+extends: t4_moe.yaml                  # parent config, deep-merged (contract small configs)
+parallelism:
+  dp: 2                                # DP over 2xT4 (mirrors R1)

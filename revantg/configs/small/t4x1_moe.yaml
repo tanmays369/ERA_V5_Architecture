@@ -1,0 +1,6 @@
+# Name: Revant Gupta
+# Pack: ind-hi-fw2
+# MoE on 1 T4 (reference for MoE layouts).
+extends: t4_moe.yaml                  # parent config, deep-merged (contract small configs)
+parallelism:
+  dp: 1                                # MoE reference, 1 GPU (mirrors R0)
