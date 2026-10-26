@@ -54,6 +54,21 @@ def errors_for(settings: list[dict]) -> list[str]:
         source = item.get("source")
         if not isinstance(source, str) or not source.strip():
             found.append(f"{key}: no source")
+    found.extend(relation_errors(settings))
+    return found
+
+
+def relation_errors(settings: list[dict]) -> list[str]:
+    values = {item.get("key"): item.get("value") for item in settings}
+    found = []
+    d_model = values.get("model.d_model")
+    n_head = values.get("model.n_head")
+    if isinstance(d_model, int) and isinstance(n_head, int) and n_head > 0 and d_model % n_head:
+        found.append(f"model.d_model {d_model} is not divisible by model.n_head {n_head}")
+    n_expert = values.get("moe.n_expert")
+    top_k = values.get("moe.top_k")
+    if isinstance(n_expert, int) and isinstance(top_k, int) and not (1 <= top_k <= n_expert):
+        found.append(f"moe.top_k {top_k} is outside 1..{n_expert}")
     return found
 
 

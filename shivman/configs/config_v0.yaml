@@ -61,7 +61,7 @@ settings:
     source: "TSAI fills model sizes on 31 Oct."
   - key: loss.train_on
     value: ntp
-    source: "The logged training loss is next-token loss. loss_mtp is computed and logged beside it."
+    source: "The logged training loss is next-token loss. A second head is trained on t+2 and logged as loss_mtp."
   - key: data.seq_len
     value: null
     open: true

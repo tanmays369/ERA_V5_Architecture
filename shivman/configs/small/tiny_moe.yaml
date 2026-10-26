@@ -13,8 +13,8 @@ overrides:
     value: 32
     source: "Tiny harness width. Not the capstone width."
   - key: model.n_head
-    value: 1
-    source: "One eager head. Not the capstone head count."
+    value: 4
+    source: "Four eager heads so the smoke test actually splits model.d_model. Not the capstone head count."
   - key: model.d_ff
     value: 64
     source: "Tiny expert width. Not the capstone width."
@@ -22,8 +22,8 @@ overrides:
     value: 4
     source: "Tiny MoE, four experts. Not the capstone expert count."
   - key: moe.top_k
-    value: 1
-    source: "Top-1 routing for the tiny run."
+    value: 2
+    source: "Top-2 of 4 experts so the smoke test reads moe.top_k. Not the capstone routing width."
   - key: data.seq_len
     value: 16
     source: "Tiny sequence length."
