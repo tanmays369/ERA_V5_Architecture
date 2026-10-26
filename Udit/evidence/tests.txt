@@ -1,0 +1,6 @@
+Command: python -m unittest discover -s teams/05-architecture/tests -v
+Result: Ran 68 tests in 445.178s
+Status: OK
+Skipped: 0
+
+Coverage includes six attention mechanisms, softmax/sigmoid routers, asymmetric QK/V dimensions, grouped KV cached decoding, repeat training, checkpoint resume, XAI isolation and real-data deterministic batching.

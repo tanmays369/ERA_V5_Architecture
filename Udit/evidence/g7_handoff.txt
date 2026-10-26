@@ -1,0 +1,2 @@
+G7 schema/source handoff: 35 pending size fields; dimension checks deferred, NOT a runnable config
+0 errors

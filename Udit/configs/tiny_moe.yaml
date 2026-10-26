@@ -1,0 +1,62 @@
+meta:
+  profile: "tiny_reference"  # source: G5 tiny engineering override; reference KE v1 shape, NOT delivered G4 KE2 or production sizes
+embedding:
+  output_dim: 96  # source: G5 tiny engineering override; reference KE v1 shape, NOT delivered G4 KE2 or production sizes
+  ke2:
+    status: "reference_only"  # source: G5 tiny engineering override; reference KE v1 shape, NOT delivered G4 KE2 or production sizes
+    output_dim: 96  # source: G5 tiny engineering override; reference KE v1 shape, NOT delivered G4 KE2 or production sizes
+model:
+  d_ff: 192  # source: G5 tiny dense FFN control
+  hidden_size: 96  # source: G5 tiny engineering override; reference KE v1 shape, NOT delivered G4 KE2 or production sizes
+  num_layers: 2  # source: G5 tiny engineering override; reference KE v1 shape, NOT delivered G4 KE2 or production sizes
+attention:
+  v_head_dim: 32  # source: G5 default symmetric reference; independent values supported
+  kv_lora_rank: 16  # source: G5 tiny MLA latent-KV ablation rank
+  q_lora_rank: 16  # source: G5 tiny MLA query bottleneck
+  qk_nope_head_dim: 24  # source: G5 MLA content channels; 24+8=32
+  qk_rope_head_dim: 8  # source: G5 MLA rotary channels
+  sliding_window_size: 16  # source: G5 local attention test window
+  rope_scaling:
+    original_max_position_embeddings: 64  # source: G5 original tiny context budget
+  query_heads: 3  # source: G5 tiny engineering override; reference KE v1 shape, NOT delivered G4 KE2 or production sizes
+  kv_heads: 1  # source: G5 tiny engineering override; reference KE v1 shape, NOT delivered G4 KE2 or production sizes
+  qk_head_dim: 32  # source: G5 tiny engineering override; reference KE v1 shape, NOT delivered G4 KE2 or production sizes
+moe:
+  num_shared_experts: 1  # source: Instructor G6 tiny benchmark topology
+  num_experts: 8  # source: Instructor G6 accepted tiny benchmark topology, not production size
+  num_experts_per_tok: 2  # source: Instructor G6 accepted tiny benchmark topology
+  shared_experts: 1  # source: Instructor G6 accepted tiny benchmark topology
+  moe_intermediate_size: 192  # source: G5 tiny engineering override; reference KE v1 shape, NOT delivered G4 KE2 or production sizes
+  shared_intermediate_size: 192  # source: G5 tiny engineering override; reference KE v1 shape, NOT delivered G4 KE2 or production sizes
+  latent_size: 48  # source: G5 tiny engineering override; reference KE v1 shape, NOT delivered G4 KE2 or production sizes
+training:
+  warmup_steps: 3  # source: G5 WSD warmup contained in first 10-percent curriculum stage
+  sequence_length: 64  # source: G5 tiny engineering override; reference KE v1 shape, NOT delivered G4 KE2 or production sizes
+
+distributed:
+  dp_size: 1  # source: G5 single-process runtime
+  ep_size: 1  # source: G5 no expert sharding runtime
+  tp_size: 1  # source: G5 no tensor sharding runtime
+  cp_size: 1  # source: G5 no context sharding runtime
+  zero_stage: 0  # source: G5 single-process tiny deterministic reference
+  stage3_param_persistence_threshold: 0  # source: G5 concrete disabled-stage reference value; elements
+  reduce_bucket_size_elements: 100000  # source: G5 concrete tiny contract value, inactive at stage 0
+  stage3_prefetch_bucket_size_elements: 100000  # source: G5 concrete tiny contract value, inactive at stage 0
+  overlap_comm: false  # source: G5 disable overlap for bitwise reference
+data_curriculum:
+  global_tokens_per_step: 18  # source: G5 fixture has 18 content tokens across its two documents; exact valid-target budget
+  stage_1_warmup:
+    seq_len: 64  # source: G5 short deterministic control; production schedule remains open
+    rope_theta: 1000000.0  # source: G5 fixed-theta control isolates reproducibility
+    moe_aux_loss_coeff: 0.01  # source: G5 tiny routing coefficient
+  stage_2_main:
+    seq_len: 64  # source: G5 short deterministic control
+    rope_theta: 1000000.0  # source: G5 fixed-theta control
+    moe_aux_loss_coeff: 0.005  # source: G5 tiny coefficient annealing hypothesis
+  stage_3_anneal:
+    seq_len: 64  # source: G5 short deterministic control
+    rope_theta: 1000000.0  # source: G5 fixed-theta control
+    moe_aux_loss_coeff: 0.001  # source: G5 tiny coefficient annealing hypothesis
+
+evaluation:
+  eval_every_steps: 1  # source: G5 tiny genuine held-out metrics every update

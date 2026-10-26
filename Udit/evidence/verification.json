@@ -1,0 +1,41 @@
+{
+  "tests_passed": 68,
+  "tests_skipped": 0,
+  "tiny_config_errors": 0,
+  "g7_handoff_errors": 0,
+  "pending_production_fields": 35,
+  "strict_production_errors_expected": 35,
+  "seed_repeat_empty_diff": true,
+  "xai_toggle_empty_diff": true,
+  "resume_15_plus_15_empty_diff": true,
+  "all_ce_and_total_loss_traces_equal": true,
+  "all_final_model_hashes_equal": true,
+  "all_30_ce_and_total_loss_steps_strictly_decrease": true,
+  "nan_count": 0,
+  "tokens_per_update": 18,
+  "loss_trace_sha256": "2298c68085b12411217f001d82cb8097a1d065377853cbbf2dfdf64ac1a81638",
+  "total_loss_trace_sha256": "4b4cb7c408ed016ca647f408d19bb44e4b09053ea80d004c3cfea4b67ea7f2b6",
+  "final_model_sha256": "8924ee2272b1a045ebcccbcf533ca7288bb19ad149c02405a231f08470c4cdc9",
+  "train_first_ce": 11.696768018934462,
+  "train_last_ce": 9.538362291124132,
+  "val_bpb_final": 3.0537729004134966,
+  "attention_mechanisms_tested": [
+    "gqa",
+    "mha",
+    "mqa",
+    "mla",
+    "sliding_window_hybrid",
+    "diff_attn"
+  ],
+  "router_scores_tested": [
+    "softmax",
+    "sigmoid"
+  ],
+  "grouped_kv_cache_prefix_equivalence": true,
+  "run_source_hashes_match_except_post_run_docs": true,
+  "post_run_document_only_changes": [
+    "AUDIT.md",
+    "harness/metrics_contract_g8.md"
+  ],
+  "scope": "FP32 single-process research reference; KV decode correctness tests are not throughput/kernel certification"
+}

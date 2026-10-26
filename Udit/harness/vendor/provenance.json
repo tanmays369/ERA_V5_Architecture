@@ -1,0 +1,13 @@
+{
+  "source_repo": "https://github.com/theschoolofai/kronecker-embeddings",
+  "local_repo": "D:\\github_repos\\kronecker-embeddings",
+  "commit": null,
+  "files": {
+    "codec.py": "d9613ac99f437ee8d309450eef3d3b43e729d1cbb780d835bf3a9b36353e516a",
+    "embedding.py": "623bd6a169cb7dd3f3ac13f8f741da69ae76471901ca5ebcc26a5cfc8beddb0b",
+    "tokenizer_utils.py": "76a1a39391093207b8f043a9a8a542982c8eb60b04e1f3900675b40ef0e43bbd",
+    "_version.py": "e71bcdfe06fad6729eab94c44797527dc02b4cfdc355ab1918dfcc42ae5d3690",
+    "__init__.py": "49cccd4d77955a534f672973f2d8ba515bd2c70e21c5db0b82f2a6cf0e88b056"
+  },
+  "modifications": "None in vendor; exact ByteLevel buffer adapter is separate in common.py"
+}

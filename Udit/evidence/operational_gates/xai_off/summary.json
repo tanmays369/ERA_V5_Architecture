@@ -1,0 +1,32 @@
+{
+  "status": "PASS",
+  "initial_probe": {
+    "ce": 11.696768018934462,
+    "bpb": 3.2661037190991045,
+    "perplexity": 120182.6585367782
+  },
+  "final_probe": {
+    "ce": 9.53212144639757,
+    "bpb": 2.6616666464262786,
+    "perplexity": 13795.827169496786
+  },
+  "initial_validation": {
+    "ce": 11.823226928710938,
+    "bpb": 3.1421362105656008,
+    "perplexity": 136383.6199327788
+  },
+  "final_validation": {
+    "ce": 11.490733555385045,
+    "bpb": 3.0537729004134966,
+    "perplexity": 97805.25193862856
+  },
+  "train_first_ce": 11.696768018934462,
+  "train_last_ce": 9.538362291124132,
+  "every_train_step_decreased": true,
+  "wall_seconds": 27.149604500009445,
+  "nan_count": 0,
+  "final_model_sha256": "8924ee2272b1a045ebcccbcf533ca7288bb19ad149c02405a231f08470c4cdc9",
+  "completed_steps": 30,
+  "tokens_seen": 540,
+  "note": "Fixture is wiring evidence, not quality/transfer proof"
+}
