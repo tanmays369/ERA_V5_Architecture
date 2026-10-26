@@ -1,0 +1,3 @@
+Seed 1234, two launches, losses.txt identical.
+First step loss_ntp 4.38609409. Last step 0.48165083. No NaN.
+CPU only, so gpu_alloc_gb is 0.
