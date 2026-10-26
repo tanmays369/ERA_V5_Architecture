@@ -99,6 +99,7 @@ class MoEFFN(nn.Module):
         self.load = None  # slot counts per expert, summed over training forwards since the last bias update
         self.last_load = None  # load of the last finished step (all-reduced over dp), for metrics
         self.last_aux = None  # aux_coef * aux of the last forward (detached)
+        self.stats = None  # router stats summed over training forwards since the last moe_metrics (see forward)
         self.aux_scale = 1.0  # gradient weight of aux; set it to the weight the trainer puts on this micro-batch loss
 
     def forward(self, x):
@@ -120,6 +121,13 @@ class MoEFFN(nn.Module):
         if self.counting:
             c = per_seq.sum(0)
             self.load = c if self.load is None else self.load + c
+            with torch.no_grad():  # metrics only: [entropy sum, picks changed by bias, selected score mass sum, tokens]
+                p = scores / scores.sum(-1, keepdim=True)
+                plain = scores.topk(k, dim=-1).indices
+                changed = k - (topi.unsqueeze(-1) == plain.unsqueeze(-2)).any(-1).sum(-1)
+                s = torch.stack([-(p * p.clamp_min(1e-30).log()).sum(), changed.sum().float(),
+                                 p.gather(-1, topi).sum(), torch.tensor(float(xf.shape[0]), device=x.device)])
+                self.stats = s if self.stats is None else self.stats + s
         if self.aux_coef:
             p = (scores / scores.sum(-1, keepdim=True)).view(B, L, E).mean(1)
             aux = self.aux_coef * ((per_seq * E / (k * L)) * p).sum(-1).mean()
@@ -233,13 +241,23 @@ def update_expert_bias(model, dp_group=None):
             moe.last_load, moe.load = load, None
 
 
-def moe_metrics(model):
-    """Per MoE layer after `update_expert_bias`: load fractions, dead experts (0 tokens), top expert share."""
+def moe_metrics(model, dp_group=None):
+    """Per MoE layer after `update_expert_bias`: load fractions, dead experts, top expert share, MaxVio
+    (max_load/mean_load - 1), router entropy (nats, of scores/sum), top-k intervention rate (share of picks where
+    bias changed topk), selected top-k score mass. Router stats all-reduced over dp, then reset. Call on every rank."""
     out = []
     for moe in model.moe_layers():
+        st = moe.stats if moe.stats is not None else torch.zeros(4, device=moe.expert_bias.device)
+        if dp_group is not None:
+            torch.distributed.all_reduce(st, group=dp_group)
+        moe.stats = None
+        n = float(st[3]) or 1.0
         frac = moe.last_load / moe.last_load.sum().clamp(min=1)
         out.append(dict(load=[round(v, 4) for v in frac.tolist()], dead_experts=int((moe.last_load == 0).sum()),
                         top_expert_share=float(frac.max()),
+                        max_vio=float(moe.last_load.max() / moe.last_load.mean().clamp(min=1e-12) - 1),
+                        router_entropy=float(st[0]) / n, intervention_rate=float(st[1]) / (n * moe.top_k),
+                        topk_mass=float(st[2]) / n,
                         aux=0.0 if moe.last_aux is None else float(moe.last_aux)))  # None when seq_aux_loss_coef == 0
     return out
 

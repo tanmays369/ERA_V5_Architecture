@@ -10,17 +10,17 @@ gate R6a exit=0
 step0 CE 11.821328163146973 vs ln(131072) 11.7835
 mean CE first 30: 11.139490  last 30: 7.020843  steps 300
 gate R7a exit=0
-exact: 300 steps byte-identical
+exact: 300 aligned steps (from 0) byte-identical
 exact R1 exit=0
-exact: 300 steps byte-identical
+exact: 300 aligned steps (from 0) byte-identical
 exact R2 exit=0
-exact: 300 steps byte-identical
+exact: 300 aligned steps (from 0) byte-identical
 exact R3 exit=0
-exact: 300 steps byte-identical
+exact: 300 aligned steps (from 0) byte-identical
 exact R6 exit=0
-exact: 300 steps byte-identical
+exact: 300 aligned steps (from 0) byte-identical
 exact R7 exit=0
-exact: 300 steps byte-identical
+exact: 300 aligned steps (from 0) byte-identical
 exact R1a-R5resumed exit=0
 300 common steps; max abs diff 1.907e-06; max rel diff 1.805e-07 at step 24 (10.56662368774414 vs 10.566625595092773)
 rtol R0-R1a exit=0

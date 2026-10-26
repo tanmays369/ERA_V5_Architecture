@@ -1,0 +1,144 @@
+# Name: Revant Gupta
+# Pack: ind-hi-fw2
+# G6 small config: tiny MoE (E4 k2), self-contained, beside config_v0.yaml. Same values as configs/small/t4x1_moe.yaml.
+# Check: python harness/check_config.py configs/config_small.yaml --world-size 1
+general:
+  project: era-v5-arch                 # [ours] team 5 (Architecture) label  # [ours] not read by harness v0
+  run: null                            # [ours] optional label; train.py --out names the run  # [ours] not read by harness v0
+  seed: 1234                           # [admin] G5 brief 24 Oct
+  deterministic: true                  # [admin] G5 brief 24 Oct: two seed-1234 runs byte-identical per-step loss  # [ours] not read by harness v0
+tokenizer:
+  name: theschoolofai/BrahmicTokenizer-131K    # [admin] G6 answer 25 Oct; [lesson S7 §13]
+  revision: 7dfcf398172c825c6689ad578e8b484ca5f57bc9    # [admin] G6 answer 25 Oct; pinned commit (worklog 26 Oct)  # [ours] not read by harness v0
+  url: https://raw.githubusercontent.com/theschoolofai/BrahmicTokenizer-131K/7dfcf398172c825c6689ad578e8b484ca5f57bc9/tokenizer.json    # [admin] G6 answer 25 Oct; [lesson S7 §13]
+  sha256: 01d968a7970b029c071b29f060abf6104b66168dedf2ff3b1a0290a545739fff    # [run results_v0/manifest.json tokenizer_sha256] measured on pinned file
+  vocab_size: 131072                   # [run results_v0/R0 step0 CE 11.84] vs ln 131072 = 11.78; [lesson S9]
+  eos_id: 36                           # [run] worklog 26 Oct: <|end_of_text|> = id 36 in pinned tokenizer.json
+embedding:
+  type: kronecker                      # [KE] kronecker-embeddings README/code; [paper arXiv 2605.29459]; [lesson S7 §13]  # [ours] not read by harness v0
+  char_dim: 256                        # [KE] KroneckerEmbedding default char_dim; [paper arXiv 2605.29459]; [lesson S7 §13]
+  pos_dim: 32                          # [KE] KroneckerEmbedding default pos_dim; [paper arXiv 2605.29459]; [lesson S7 §13]
+  mode: dynamic                        # [KE] KroneckerEmbedding default mode; [paper arXiv 2605.29459]; [lesson S7 §13]
+  projection_trainable: true           # [KE] projection is the only trainable param; [paper arXiv 2605.29459]; [lesson S7 §13]
+  weight_decay: 0.0                    # [lesson S15 §18] no WD on embeddings; [KE] code: projection is the only param
+  ke2_output_shape: null               # [lead] G5 26 Oct: G4 sends KE2 output shape Tue 27 Oct  # [ours] not read by harness v0
+model:
+  n_layers: 4                          # [run results_v0/R0] harness size, T4 fits (300 steps, exit 0)
+  d_model: 256                         # [run results_v0/R0] harness size, T4 fits (300 steps, exit 0)
+  n_heads: 4                           # [run results_v0/R0] harness size, T4 fits (300 steps, exit 0)
+  n_kv_heads: 2                        # [run results_v0/R0] harness size, T4 fits (300 steps, exit 0)
+  d_ff: 384                            # [ours] per expert; top_k*d_ff = dense d_ff 768 so active FFN params ~ dense
+  ffn: swiglu                          # [lesson S9 §2]; SmolLM3 hidden_act silu (stage1_8T.yaml:179)  # [ours] not read by harness v0
+  norm: rmsnorm                        # [lesson S9 §2]  # [ours] not read by harness v0
+  norm_position: pre                   # [lesson S9 §2]  # [ours] not read by harness v0
+  norm_eps: 1.0e-6                     # [ref SmolLM3 stage1_8T.yaml:191]
+  position: rope                       # [lesson S8 §8]; absolute table ruled out S8 §16  # [ours] not read by harness v0
+  rope_theta: 50000                    # [ref SmolLM3 stage1_8T.yaml:194]
+  qk_norm: true                        # [lesson S15 §18]
+  bias: false                          # [ref SmolLM3 stage1_8T.yaml:175]  # [ours] not read by harness v0
+  dropout: 0.0                         # [lesson S10 §15]  # [ours] not read by harness v0
+  tie_embeddings: false                # [lesson S7 §13] untied (KE has no V x d table)  # [ours] not read by harness v0
+  init_std: 0.02                       # [ref SmolLM3 stage1_8T.yaml:167]
+  norm_gain_init: 1.0                  # [lesson S15 L56]
+moe:
+  enabled: true                        # [lead] G5 brief 24 Oct + lead 26 Oct: tiny MoE
+  num_experts: 4                       # [ours] harness size, T4 fits; [lesson S14 §20]
+  top_k: 2                             # [ours] harness size; k/E = 1/2 active; [lesson S14 §20]
+  shared_experts: 0                    # [lesson S14 §20] DeepSeek-style shared expert optional
+  router_dtype: fp32                   # [lesson S14 §20]  # [ours] not read by harness v0
+  balancing: aux_free_bias             # [lesson S14 §20]  # [ours] not read by harness v0
+  bias_update_speed: 1.0e-3            # [lesson S14 §20]
+  seq_aux_loss_coef: 1.0e-4            # [lesson S14 §20]
+  dropless: true                       # [lesson S14 §20]  # [ours] not read by harness v0
+head:
+  loss: cross_entropy                  # [lesson S9] init loss ln V
+  z_loss_coef: 1.0e-4                  # [lesson S15 L213] z-loss S15 §18
+  mtp_heads: 0                         # [ours] v0 harness has no MTP head  # [ours] not read by harness v0
+optimizer:
+  matrices_2d: muon                    # [admin] G6 answer 25 Oct; [lesson S11 §13]  # [ours] not read by harness v0
+  other_params: adamw                  # [admin] G6 answer 25 Oct; [lesson S11 §13]  # [ours] not read by harness v0
+  lr: 3.0e-4                           # [lesson S11 §2]
+  adam_betas: [0.9, 0.999]             # [lesson S11 §4-6]
+  adam_eps: 1.0e-8                     # [lesson S11 §4-6]
+  weight_decay: 0.1                    # [ref SmolLM3 stage1_8T.yaml:219]; LR*WD law 17.04/steps (S16 §12) to test wk2
+  muon_momentum: 0.95                  # [default torch] torch.optim.Muon momentum (Keller Jordan reference)
+  muon_nesterov: true                  # [default torch] torch.optim.Muon nesterov (Keller Jordan reference)
+  muon_ns_steps: 5                     # [default torch] torch.optim.Muon ns_steps (Keller Jordan reference)
+  muon_ns_dtype: fp32                  # [ours] T4 has no bf16
+  muon_adjust_lr: match_rms_adamw      # [ours] torch.optim.Muon adjust_lr_fn option; lets Muon share AdamW lr
+  no_decay: [norm, bias, embedding]    # [lesson S15 §18] no WD on embeddings; norm/bias per [admin] G6 split  # [ours] not read by harness v0
+  grad_clip: 1.0                       # [lesson S15 §18]; SmolLM3 clip_grad (stage1_8T.yaml:204)
+  activation_grad_clip: false          # [ours] off in v0  # [ours] not read by harness v0
+schedule:
+  type: wsd                            # [lesson S11 §10/§14]  # [ours] not read by harness v0
+  warmup_frac: 0.02                    # [lesson S11 §10/§14]; long warmup S15 §18
+  decay_frac: 0.10                     # [ours] near SmolLM3 decay 522000/4720000 = 0.111 (stage1_8T.yaml:208,255); alignment = plan_v0 arm
+  min_lr_ratio: 0.0                    # [lesson S11 §10/§14] WSD decays to 0; SmolLM3 min_decay_lr 0 (stage1_8T.yaml:212)
+tokens:
+  seq_len: 256                         # [run results_v0/R0] harness size, T4 fits (300 steps, exit 0)
+  global_batch_seqs: 16                # [run results_v0/R0] harness size, T4 fits (300 steps, exit 0)
+  micro_batch_seqs: 4                  # [run results_v0/R0] harness size, T4 fits (300 steps, exit 0)
+  train_steps: 300                     # [run results_v0/R0] harness size, T4 fits (300 steps, exit 0)
+precision: fp32                        # [ours] T4 has no bf16; S10 §16 precision open  # [ours] not read by harness v0
+parallelism:
+  dp: 1                                # [ref nanotron src_nanotron_config_parallelism_config.py:29]; layouts in configs/small
+  tp: 1                                # [ref nanotron src_nanotron_config_parallelism_config.py:31]; layouts in configs/small
+  pp: 1                                # [ref nanotron src_nanotron_config_parallelism_config.py:30]; layouts in configs/small
+  pp_engine: 1f1b                      # [ref nanotron src_nanotron_config_parallelism_config.py:23]
+  pp_microbatches: 4                   # [ours] torch.distributed.pipelining n_microbatches
+  tp_mode: all_reduce                  # [ref nanotron src_nanotron_config_parallelism_config.py:24]  # [ours] not read by harness v0
+  zero_stage: 0                        # [ref nanotron src_nanotron_config_config.py:428]; SmolLM3 0 (stage1_8T.yaml:222)
+  recompute_layer: false               # [ref nanotron src_nanotron_config_parallelism_config.py:35]
+  expert_parallel_size: 1              # [ref nanotron src_nanotron_config_parallelism_config.py:38]  # [ours] not read by harness v0
+  context_parallel_size: 1             # [ref nanotron src_nanotron_config_parallelism_config.py:39]  # [ours] not read by harness v0
+datasets:
+  - {name: fineweb_edu, hf: HuggingFaceFW/fineweb-edu, subset: sample-10BT, split: train, text_field: text}    # [ref SmolLM3 stage1_8T.yaml:15]
+  - {name: dclm, hf: mlfoundations/dclm-baseline-1.0, subset: null, split: train, text_field: text}    # [ref SmolLM3 stage1_8T.yaml:16]
+  - {name: finemath, hf: HuggingFaceTB/finemath, subset: finemath-3plus, split: train, text_field: text}    # [ref SmolLM3 stage1_8T.yaml:36]
+  - {name: code, hf: codeparrot/codeparrot-clean, subset: null, split: train, text_field: content}    # [ours] Python-only, ungated (SmolLM3 the-stack-v2 stage1_8T.yaml:37 needs HF token)
+  - {name: hin, hf: HuggingFaceFW/fineweb-2, subset: hin_Deva, split: train, text_field: text}    # [ref SmolLM3 stage1_8T.yaml:31]
+  - {name: ben, hf: HuggingFaceFW/fineweb-2, subset: ben_Beng, split: train, text_field: text}    # [ours] FineWeb-2 Indic subset, HF card https://huggingface.co/datasets/HuggingFaceFW/fineweb-2/viewer/ben_Beng
+  - {name: tam, hf: HuggingFaceFW/fineweb-2, subset: tam_Taml, split: train, text_field: text}    # [ours] FineWeb-2 Indic subset, HF card https://huggingface.co/datasets/HuggingFaceFW/fineweb-2/viewer/tam_Taml
+  - {name: tel, hf: HuggingFaceFW/fineweb-2, subset: tel_Telu, split: train, text_field: text}    # [ours] FineWeb-2 Indic subset, HF card https://huggingface.co/datasets/HuggingFaceFW/fineweb-2/viewer/tel_Telu
+  - {name: kan, hf: HuggingFaceFW/fineweb-2, subset: kan_Knda, split: train, text_field: text}    # [ours] FineWeb-2 Indic subset, HF card https://huggingface.co/datasets/HuggingFaceFW/fineweb-2/viewer/kan_Knda
+  - {name: mal, hf: HuggingFaceFW/fineweb-2, subset: mal_Mlym, split: train, text_field: text}    # [ours] FineWeb-2 Indic subset, HF card https://huggingface.co/datasets/HuggingFaceFW/fineweb-2/viewer/mal_Mlym
+  - {name: mar, hf: HuggingFaceFW/fineweb-2, subset: mar_Deva, split: train, text_field: text}    # [ours] FineWeb-2 Indic subset, HF card https://huggingface.co/datasets/HuggingFaceFW/fineweb-2/viewer/mar_Deva
+  - {name: guj, hf: HuggingFaceFW/fineweb-2, subset: guj_Gujr, split: train, text_field: text}    # [ours] FineWeb-2 Indic subset, HF card https://huggingface.co/datasets/HuggingFaceFW/fineweb-2/viewer/guj_Gujr
+data:
+  docs_per_source: 500                 # [run results_v0/R0] harness size, T4 fits (300 steps, exit 0)
+  heldout_docs_per_source: 20          # [run results_v0/R0] harness size, T4 fits (300 steps, exit 0)
+data_stages:
+  - name: stable                       # [ref SmolLM3 stage3_9T_11T.yaml:147]
+    start_frac: 0.0                    # [ref SmolLM3 stage3_9T_11T.yaml:148] start_training_step 1
+    weights: {fineweb_edu: 0.22, dclm: 0.18, code: 0.22, finemath: 0.08, hin: 0.10, ben: 0.04, tam: 0.03, tel: 0.03, kan: 0.03, mal: 0.025, mar: 0.025, guj: 0.02}    # [lesson S5] hypothesis ("a proportion is an opinion until a proxy run has tested it"); code rising, programming = goal #1 (S15 §19)
+  - name: stage2                       # [ref SmolLM3 stage3_9T_11T.yaml:300] "stable stage 2"
+    start_frac: 0.73                   # [ours] near SmolLM3 stage starts 0.731/0.889 (stage1/stage3 yaml); alignment = plan_v0 arm
+    weights: {fineweb_edu: 0.19, dclm: 0.15, code: 0.26, finemath: 0.12, hin: 0.09, ben: 0.04, tam: 0.03, tel: 0.03, kan: 0.03, mal: 0.02, mar: 0.02, guj: 0.02}    # [lesson S5] hypothesis; code rising (S15 §19)
+  - name: anneal                       # [ref SmolLM3 stage3_9T_11T.yaml:483] "decay stage"
+    start_frac: 0.82                   # [ours] near SmolLM3 stage starts 0.731/0.889 (stage1/stage3 yaml); alignment = plan_v0 arm
+    weights: {fineweb_edu: 0.20, dclm: 0.10, code: 0.28, finemath: 0.14, hin: 0.09, ben: 0.04, tam: 0.03, tel: 0.03, kan: 0.03, mal: 0.02, mar: 0.02, guj: 0.02}    # [lesson S5] hypothesis; code rising (S15 §19)
+safety:
+  on_nan: stop                         # [lesson S15 L363-365]  # [ours] not read by harness v0
+  checkpoint_after_nan: false          # [lesson S15 L363-365]  # [ours] not read by harness v0
+  spike_sigma: 7                       # [lesson S15 L363-365]  # [ours] not read by harness v0
+  spike_window: 1000                   # [lesson S15 L363-365]
+  ema_alpha: 0.97                      # [lesson S15 L363-365]
+  ema_z_threshold: 2.5                 # [lesson S15 L363-365]  # [ours] not read by harness v0
+freeze:
+  frozen_parts: []                     # [lesson S15 §18]
+  hash_frozen_weights: true            # [lesson S15 §18]
+logging:
+  format: jsonl                        # [lead] G8 gate: "rows equal JSONL lines"  # [ours] not read by harness v0
+  scalars_every: 1                     # [lesson S15 L693-701]  # [ours] not read by harness v0
+  per_layer_every: 10                  # [lesson S15 L693-701]
+  eval_every: 50                       # [run results_v0/R0] harness size, T4 fits (300 steps, exit 0)
+  metrics: [loss, loss_ntp, loss_mtp, lr, tokens_per_second, gpu_alloc_gb, z_loss, held_out_loss, bpb, grad_norm, update_to_weight_ratio, max_attn_logit, spike_score, ema_z, step_time_ms, dead_experts, top_expert_share]    # [lead] G5 26 Oct: six names for G8 (first 6); rest S15 L693-701, L739  # [ours] not read by harness v0
+checkpoint:
+  every_steps: 100                     # [run results_v0/R0] harness size, T4 fits (300 steps, exit 0)
+  strict_load: true                    # [lesson S15 L633]
+  keep_last: 2                         # [ours] harness default; interval open S15 §18
+paths:
+  tokenizer: work/tokenizer/tokenizer.json    # [ours] scratch under work/, relative to cwd
+  data: work/data/t4                   # [ours] harness data dir under work/
+  runs: work/runs                      # [ours] scratch under work/
+open_keys: [model.n_layers, model.d_model, model.n_heads, model.n_kv_heads, model.d_ff, moe.num_experts, moe.top_k, tokens.seq_len, tokens.global_batch_seqs, tokens.micro_batch_seqs, tokens.train_steps, data.docs_per_source, data.heldout_docs_per_source, logging.eval_every, embedding.ke2_output_shape]    # [lead] sizes TSAI fills 31 Oct; ke2 shape from G4  # [ours] not read by harness v0

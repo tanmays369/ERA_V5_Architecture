@@ -1,10 +1,10 @@
 # Name: Revant Gupta
 # Pack: ind-hi-fw2
 # Tiny CPU MoE smoke (gloo); vary layout with --set.
-extends: cpu_smoke.yaml               # parent config, deep-merged (contract small configs)
+extends: cpu_smoke.yaml               # [ours] parent config, deep-merged (contract small configs)
 moe:
-  enabled: true                        # G5 brief 24 Oct + lead 26 Oct: tiny MoE
-  num_experts: 4                       # CPU smoke size (S14 §20)
-  top_k: 2                             # CPU smoke size; k/E = 1/2 active (S14 §20)
+  enabled: true                        # [lead] G5 brief 24 Oct + lead 26 Oct: tiny MoE
+  num_experts: 4                       # [ours] CPU smoke size; [lesson S14 §20]
+  top_k: 2                             # [ours] CPU smoke size; k/E = 1/2 active; [lesson S14 §20]
 model:
-  d_ff: 128                           # per expert; top_k*d_ff = dense d_ff 256 so active FFN params ~ dense
+  d_ff: 128                           # [ours] per expert; top_k*d_ff = dense d_ff 256 so active FFN params ~ dense

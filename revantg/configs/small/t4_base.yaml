@@ -1,26 +1,26 @@
 # Name: Revant Gupta
 # Pack: ind-hi-fw2
 # Harness-size base for Kaggle T4 runs; layouts extend this.
-extends: ../config_v0.yaml            # parent config, deep-merged (contract small configs)
+extends: ../config_v0.yaml            # [ours] parent config, deep-merged (contract small configs)
 model:
-  n_layers: 4                          # harness size, T4 fits
-  d_model: 256                         # harness size, T4 fits
-  n_heads: 4                           # harness size, T4 fits
-  n_kv_heads: 2                        # harness size, T4 fits
-  d_ff: 768                            # harness size, T4 fits
+  n_layers: 4                          # [run results_v0/R0] harness size, T4 fits (300 steps, exit 0)
+  d_model: 256                         # [run results_v0/R0] harness size, T4 fits (300 steps, exit 0)
+  n_heads: 4                           # [run results_v0/R0] harness size, T4 fits (300 steps, exit 0)
+  n_kv_heads: 2                        # [run results_v0/R0] harness size, T4 fits (300 steps, exit 0)
+  d_ff: 768                            # [run results_v0/R0] harness size, T4 fits (300 steps, exit 0)
 moe:
-  enabled: false                       # dense reference arm (lead 26 Oct: MoE vs dense)
+  enabled: false                       # [lead] 26 Oct: dense reference arm (MoE vs dense)
 tokens:
-  seq_len: 256                         # harness size, T4 fits
-  global_batch_seqs: 16                # harness size, T4 fits
-  micro_batch_seqs: 4                  # harness size, T4 fits
-  train_steps: 300                     # harness size, T4 fits
+  seq_len: 256                         # [run results_v0/R0] harness size, T4 fits (300 steps, exit 0)
+  global_batch_seqs: 16                # [run results_v0/R0] harness size, T4 fits (300 steps, exit 0)
+  micro_batch_seqs: 4                  # [run results_v0/R0] harness size, T4 fits (300 steps, exit 0)
+  train_steps: 300                     # [run results_v0/R0] harness size, T4 fits (300 steps, exit 0)
 data:
-  docs_per_source: 500                 # harness size, T4 fits
-  heldout_docs_per_source: 20          # harness size, T4 fits
+  docs_per_source: 500                 # [run results_v0/R0] harness size, T4 fits (300 steps, exit 0)
+  heldout_docs_per_source: 20          # [run results_v0/R0] harness size, T4 fits (300 steps, exit 0)
 logging:
-  eval_every: 50                       # harness size, T4 fits
+  eval_every: 50                       # [run results_v0/R0] harness size, T4 fits (300 steps, exit 0)
 checkpoint:
-  every_steps: 100                     # harness size, T4 fits
+  every_steps: 100                     # [run results_v0/R0] harness size, T4 fits (300 steps, exit 0)
 paths:
-  data: work/data/t4                   # harness data dir under work/ (contract env rules)
+  data: work/data/t4                   # [ours] harness data dir under work/

@@ -13,11 +13,12 @@ ARMS = [  # key, label, colour
     ("M2_e8k2", "MoE 8 experts, top-2", "#2563EB"),
     ("M3_e16k4_fine", "MoE 16 fine experts, top-4", "#14B8A6"),
     ("M4_e8k1_shared1", "MoE 8 experts, top-1 + 1 shared", "#0E1A24"),
+    ("M5_e8k2_nobias", "MoE 8 experts, top-2, no balancing", "#F59E0B"),
 ]
-LAYOUTS = [  # results/kaggle_matrix_300/README.md table
-    ("Dense", "1 GPU", 8573), ("Dense", "DP=2", 13659), ("Dense", "TP=2", 5547),
-    ("Dense", "PP=2", 9276), ("Dense", "DP=2 + ZeRO-1", 13797),
-    ("MoE", "1 GPU", 6724), ("MoE", "DP=2", 10228), ("MoE", "PP=2", 8129),
+LAYOUTS = [  # results/kaggle_matrix_300/README.md table (Kaggle notebook v6, final code)
+    ("Dense", "1 GPU", 8592), ("Dense", "DP=2", 13879), ("Dense", "TP=2", 5621),
+    ("Dense", "PP=2", 9808), ("Dense", "DP=2 + ZeRO-1", 14323),
+    ("MoE", "1 GPU", 6592), ("MoE", "DP=2", 9918), ("MoE", "PP=2", 8246),
 ]
 
 

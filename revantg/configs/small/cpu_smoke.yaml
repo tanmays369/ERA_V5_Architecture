@@ -1,24 +1,24 @@
 # Name: Revant Gupta
 # Pack: ind-hi-fw2
 # Tiny CPU smoke (gloo); vary layout with --set parallelism.dp=2 etc.
-extends: t4_base.yaml                 # parent config, deep-merged (contract small configs)
+extends: t4_base.yaml                 # [ours] parent config, deep-merged (contract small configs)
 model:
-  n_layers: 2                          # CPU smoke size
-  d_model: 64                          # CPU smoke size
-  n_heads: 4                           # CPU smoke size
-  n_kv_heads: 2                        # CPU smoke size
-  d_ff: 256                            # CPU smoke size
+  n_layers: 2                          # [ours] CPU smoke size
+  d_model: 64                          # [ours] CPU smoke size
+  n_heads: 4                           # [ours] CPU smoke size
+  n_kv_heads: 2                        # [ours] CPU smoke size
+  d_ff: 256                            # [ours] CPU smoke size
 tokens:
-  seq_len: 64                          # CPU smoke size
-  global_batch_seqs: 8                 # CPU smoke size
-  micro_batch_seqs: 2                  # CPU smoke size
-  train_steps: 20                      # CPU smoke size
+  seq_len: 64                          # [ours] CPU smoke size
+  global_batch_seqs: 8                 # [ours] CPU smoke size
+  micro_batch_seqs: 2                  # [ours] CPU smoke size
+  train_steps: 20                      # [ours] CPU smoke size
 data:
-  docs_per_source: 40                  # CPU smoke size
-  heldout_docs_per_source: 5           # CPU smoke size
+  docs_per_source: 40                  # [ours] CPU smoke size
+  heldout_docs_per_source: 5           # [ours] CPU smoke size
 logging:
-  eval_every: 10                       # CPU smoke size
+  eval_every: 10                       # [ours] CPU smoke size
 checkpoint:
-  every_steps: 10                      # CPU smoke size
+  every_steps: 10                      # [ours] CPU smoke size
 paths:
-  data: work/data/smoke                # smoke data dir under work/ (contract env rules)
+  data: work/data/smoke                # [ours] smoke data dir under work/

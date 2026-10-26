@@ -10,3 +10,9 @@ check M4_e8k1_shared1 exit=0
 === M4_e8k1_shared1 exit=0
 check M5_e8k2_nobias exit=0
 === M5_e8k2_nobias exit=1
+check M2_e8k2 exit=0
+=== M2_e8k2 exit=0
+check M5_e8k2_nobias exit=0
+=== M5_e8k2_nobias exit=0
+check M2_e8k2_rep exit=0
+=== M2_e8k2_rep exit=0

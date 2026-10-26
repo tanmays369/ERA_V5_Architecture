@@ -1,6 +1,6 @@
 # Name: Revant Gupta
 # Pack: ind-hi-fw2
 # R0: single-T4 reference run (all layouts compared against it).
-extends: t4_base.yaml                 # parent config, deep-merged (contract small configs)
+extends: t4_base.yaml                 # [ours] parent config, deep-merged (contract small configs)
 parallelism:
-  dp: 1                                # R0 reference, 1 GPU (contract run matrix)
+  dp: 1                                # [ours] R0 reference, 1 GPU (contract run matrix)

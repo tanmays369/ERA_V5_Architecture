@@ -39,14 +39,21 @@ def gate(run):
 def compare(a, b, exact, rtol):
     ra, rb = losses(a), losses(b)
     if exact:
-        for (sa, va), (sb, vb) in zip(ra, rb):
-            if (sa, va) != (sb, vb):
-                print(f"FAIL first difference at step {sa}: {va} vs {vb}")
-                return False
-        if len(ra) != len(rb) or not ra:
-            print(f"FAIL length {len(ra)} vs {len(rb)}")
+        da, db = dict(ra), dict(rb)
+        sa, sb = [s for s, _ in ra], [s for s, _ in rb]
+        common = [s for s in sa if s in db]
+        if not common:
+            print(f"FAIL no common steps ({len(sa)} vs {len(sb)} steps)")
             return False
-        print(f"exact: {len(ra)} steps byte-identical")
+        # B (e.g. a resumed run) may start later, but its steps must be a contiguous suffix of A's, or the same steps
+        if sb != sa[len(sa) - len(sb):] and sa != sb[len(sb) - len(sa):]:
+            print(f"FAIL steps are not aligned: A {sa[0]}..{sa[-1]} ({len(sa)}), B {sb[0]}..{sb[-1]} ({len(sb)})")
+            return False
+        for s in common:
+            if da[s] != db[s]:
+                print(f"FAIL first difference at step {s}: {da[s]} vs {db[s]}")
+                return False
+        print(f"exact: {len(common)} aligned steps (from {common[0]}) byte-identical")
         return True
     db = dict(rb)
     common = [(s, float(v), float(db[s])) for s, v in ra if s in db]

@@ -208,7 +208,7 @@ footer{margin-top:72px;padding-top:28px;border-top:1px solid var(--line);color:v
   <h1>Tiny MoE harness v0 <em>is deterministic on 2× T4, and MoE beats dense</em></h1>
   <p class="lede">My contribution to the team comparison agreed on the 26 Oct call: a config, a config checker and a training harness. It trains a Kronecker-embedding MoE decoder with Muon + AdamW, and supports DP, TP, PP and ZeRO-1. Two runs with seed 1234 give byte-identical loss at every step. Every MoE arm keeps the active FFN width equal to dense.</p>
   <div class="chips">
-    <a class="chip cta" href="https://github.com/theschoolofai/era-v5-lab/pull/55">Open lab PR #55 →</a>
+    <a class="chip cta" href="https://github.com/theschoolofai/era-v5-lab/pull/55">Lab PR #55 (closed) -></a>
     <span class="chip"><span class="ok"></span>pr-guard pass</span>
     <span class="chip">Kaggle 2× Tesla T4 · torch 2.11 · fp32</span>
     <span class="chip">BrahmicTokenizer-131K · 12 HF sources · ~9.0M tokens</span>
@@ -310,7 +310,7 @@ footer{margin-top:72px;padding-top:28px;border-top:1px solid var(--line);color:v
       <th aria-sort="none"><button data-k="top">Top expert share (max)</button></th>
     </tr></thead><tbody></tbody></table></div>
     <details><summary>Read with care</summary>
-      <p class="sub" style="margin:0 0 8px">This is one seed and 1,000 steps on about 9M tokens. The gaps are small (≤ 0.033 nats) but consistent from step 500 onward. Every MoE arm beats dense. The shared expert with top-1 and the 8-expert top-2 arm lead. The fine-grained arm with 16 experts and top-4 balances best but is 2.7× slower on T4, because the reference expert loop doesn't fuse. A 6th arm with no load balancing, testing for router collapse, hit a logging bug (now fixed); its re-run is pending.</p>
+    <p class="sub" style="margin:0 0 8px">This is one seed and 1,000 steps on about 9M tokens. The gaps are small (≤ 0.033 nats) but consistent from about step 250 onward. Every MoE arm beats dense. The shared expert with top-1 and the 8-expert top-2 arm lead. The fine-grained arm with 16 experts and top-4 balances best but is 2.7× slower on T4, because the reference expert loop doesn't fuse. With load balancing turned off, routing collapses early (dead experts from step 34, up to 7 in one step) but recovers, and its CE is within noise of the balanced arm, so balancing is a stability guard here, not a loss win.</p>
     </details>
   </div>
 </section>

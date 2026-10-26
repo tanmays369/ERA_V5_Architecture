@@ -1,7 +1,7 @@
 # Name: Revant Gupta
 # Pack: ind-hi-fw2
 # R4: DP2 with ZeRO-1 optimizer-state sharding on 2xT4.
-extends: t4_base.yaml                 # parent config, deep-merged (contract small configs)
+extends: t4_base.yaml                 # [ours] parent config, deep-merged (contract small configs)
 parallelism:
-  dp: 2                                # R4 DP over 2xT4 (contract run matrix)
-  zero_stage: 1                        # nanotron ParallelismArgs; ZeRO-1 (contract run matrix R4)
+  dp: 2                                # [ours] R4 DP over 2xT4 (contract run matrix)
+  zero_stage: 1                        # [ref nanotron src_nanotron_config_config.py:428] zero_stage; ZeRO-1 (contract run matrix R4)

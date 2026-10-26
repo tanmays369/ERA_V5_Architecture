@@ -4,7 +4,6 @@
 
 A global batch depends only on (general.seed, step, config): never on rank or parallel layout.
 """
-import json
 import os
 
 import numpy as np
@@ -26,9 +25,6 @@ class Batches:
                        for s in stages]
         self.train = [np.memmap(os.path.join(d, f"{n}.train.bin"), dtype="<u4", mode="r") for n in self.names]
         self.val = [np.memmap(os.path.join(d, f"{n}.val.bin"), dtype="<u4", mode="r") for n in self.names]
-        with open(os.path.join(d, "manifest.json")) as f:
-            m = json.load(f)["datasets"]
-        self.val_bytes_per_token = sum(m[n]["val_bytes"] for n in self.names) / sum(m[n]["val_tokens"] for n in self.names)
 
     def _stage(self, step):
         return [s for s in self.stages if s[0] <= step][-1]
@@ -64,3 +60,21 @@ class Batches:
             for off in rng.integers(0, len(v) - self.seq_len - 1, size=VAL_WINDOWS_PER_SOURCE):
                 rows.append(v[off: off + self.seq_len + 1])
         return torch.from_numpy(np.stack(rows).astype(np.int64))
+
+    def val_meta(self, tokenizer_path):
+        """(source_idx LongTensor[Nv], target_bytes LongTensor[Nv]) for val_batch() rows: BPB divides by the bytes of
+        the evaluated target tokens, so its weighting matches the CE (equal windows per source)."""
+        nbytes = token_bytes(tokenizer_path)
+        rows = self.val_batch()[:, 1:].numpy()
+        src = np.repeat(np.arange(len(self.names)), VAL_WINDOWS_PER_SOURCE)
+        return torch.from_numpy(src), torch.from_numpy(nbytes[rows].sum(1))
+
+
+def token_bytes(tokenizer_path):
+    """UTF-8 byte length per token id. ByteLevel BPE: one char of the token string = one byte; added tokens (EOS) 0.
+    Checked: summed over each smoke `*.val.bin` it equals the manifest `val_bytes` for all 12 sources."""
+    from tokenizers import Tokenizer
+    t = Tokenizer.from_file(tokenizer_path)
+    added = t.get_added_tokens_decoder()
+    return np.array([0 if i in added else len(t.id_to_token(i)) for i in range(t.get_vocab_size(with_added_tokens=True))],
+                    dtype=np.int64)

@@ -63,19 +63,19 @@
   "name": "gpu_alloc_gb",
   "unit": "GB",
   "cadence": "every step",
-  "source": "torch.cuda.memory_allocated()/1e9 on rank 0; 0 on CPU"
+  "source": "peak allocated during the step: torch.cuda.max_memory_allocated()/1e9 on rank 0 (peak stats reset each step); 0 on CPU"
  },
  {
   "name": "spike_score",
   "unit": "sigma",
   "cadence": "every step",
-  "source": "(loss - mean)/std over the last safety.spike_window losses; null < 10"
+  "source": "(loss - mean)/std over the last safety.spike_window losses; null < 10 losses"
  },
  {
   "name": "ema_z",
   "unit": "sigma",
   "cadence": "every step",
-  "source": "(loss - EMA)/sqrt(EMA var), alpha safety.ema_alpha; null at step 0"
+  "source": "(loss - EMA)/sqrt(EMA var), alpha safety.ema_alpha; null before step 10"
  },
  {
   "name": "update_to_weight_ratio",
@@ -93,13 +93,19 @@
   "name": "held_out_loss",
   "unit": "nats/token",
   "cadence": "every logging.eval_every",
-  "source": "CE on data.val_batch() after the step"
+  "source": "mean CE over data.val_batch() windows (equal windows per source) after the step"
+ },
+ {
+  "name": "held_out_loss_<source>",
+  "unit": "nats/token",
+  "cadence": "every logging.eval_every",
+  "source": "same, one key per dataset name (e.g. held_out_loss_hin)"
  },
  {
   "name": "bpb",
   "unit": "bits/byte",
   "cadence": "every logging.eval_every",
-  "source": "held_out_loss / ln2 / val bytes per token (manifest)"
+  "source": "sum of window CE nats / ln2 / UTF-8 bytes of the evaluated target tokens (tokenizer byte lengths; EOS = 0), so it weights sources like the CE"
  },
  {
   "name": "dead_experts",
@@ -118,5 +124,11 @@
   "unit": "nats/token",
   "cadence": "every step (MoE only)",
   "source": "seq-wise aux loss (coef applied), last micro-batch, summed over layers; in the gradient, not in `loss`"
+ },
+ {
+  "name": "moe_layers",
+  "unit": "list",
+  "cadence": "every logging.per_layer_every (MoE only)",
+  "source": "one object per MoE layer: layer, load (fractions of routed slots per expert), dead_experts, top_expert_share, max_vio (max_load/mean_load - 1), router_entropy (nats, of scores/sum), intervention_rate (share of top-k picks where the bias changed the choice vs topk of the raw scores), topk_mass (mean share of the score sum on the selected experts), aux. Load/MaxVio are global (dp all-reduced); entropy/intervention/mass are token means over this step's training forwards, dp-reduced"
  }
 ]

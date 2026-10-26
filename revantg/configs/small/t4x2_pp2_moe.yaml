@@ -1,9 +1,9 @@
 # Name: Revant Gupta
 # Pack: ind-hi-fw2
 # MoE with pipeline parallel on 2xT4 (same layout as t4x2_pp2).
-extends: t4_moe.yaml                  # parent config, deep-merged (contract small configs)
+extends: t4_moe.yaml                  # [ours] parent config, deep-merged (contract small configs)
 parallelism:
-  pp: 2                                # PP over 2xT4 (mirrors R3)
-  pp_microbatches: 4                   # nanotron ParallelismArgs; 16/4 = 4 seqs per pipeline micro-batch
+  pp: 2                                # [ours] PP over 2xT4 (mirrors R3)
+  pp_microbatches: 4                   # [ours] torch.distributed.pipelining n_microbatches; 16/4 = 4 seqs per pipeline micro-batch
 tokens:
-  micro_batch_seqs: 16                 # PP needs grad_accum 1: global 16 = 1 x 16 (contract)
+  micro_batch_seqs: 16                 # [ours] PP needs grad_accum 1: global 16 = 1 x 16 (contract)

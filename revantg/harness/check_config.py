@@ -1,10 +1,11 @@
 # Name: Revant Gupta
 # Pack: ind-hi-fw2
-"""Validate a harness config: source comments, nulls/open keys, data stages, v0 limits, size/layout divisibility.
+"""Validate a harness config: tagged source comments, values/open keys, key set vs config_v0, data stages, v0 limits, layout.
 Usage: python check_config.py CONFIG [--set k=v ...] [--world-size N]. Prints problems, then `N errors, M open`; exit 1 on errors.
 """
 import argparse
 import os
+import re
 import sys
 
 import yaml
@@ -14,6 +15,10 @@ import config  # noqa: E402
 
 NULLABLE = {"general.run"}  # optional label; train.py --out names the run
 WHO = {"embedding.ke2_output_shape": "G4 Tue 27 Oct"}  # who fills an open key; default TSAI 31 Oct
+REFERENCE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "configs", "config_v0.yaml")  # required key set
+# a source comment starts with one of these class tags (lead G5 26 Oct source rule + review P0.3)
+TAG = re.compile(r"\[(KE|paper arXiv 2605\.29459|run( results_v0/[^\]]+)?|lesson S\d+[^\]]*|admin|lead"
+                 r"|ref SmolLM3 [^\]]+|ref nanotron [^\]]+|default torch|ours)\]")
 
 
 def leaf_lines(node, prefix, out):
@@ -28,8 +33,8 @@ def leaf_lines(node, prefix, out):
         out[prefix[:-1]] = (node.start_mark.line, node.end_mark.line)
 
 
-def comment_errors(path):
-    """Leaves whose setting file (last in the extends chain) has no inline `#` comment on that line."""
+def source_errors(path):
+    """Leaves whose setting file (last in the extends chain) lacks an inline comment starting with a source tag."""
     owner = {}  # dotted key -> (file, lines, start, end)
     for f, _ in config.chain(path):
         with open(f) as fh:
@@ -47,8 +52,9 @@ def comment_errors(path):
             owner[key] = (f, lines, a, b)
     errs = []
     for key, (f, lines, a, b) in owner.items():
-        if not any(" #" in lines[i] for i in {a, b} if i < len(lines)):
-            errs.append(f"error: {key} has no '# source' comment ({os.path.relpath(f)}:{a + 1})")
+        comments = [lines[i].split(" #", 1)[1].strip() for i in {a, b} if i < len(lines) and " #" in lines[i]]
+        if not any(TAG.match(c) for c in comments):
+            errs.append(f"no source: {key} ({os.path.relpath(f)}:{a + 1})")
     return errs
 
 
@@ -63,16 +69,21 @@ def walk(d, prefix=""):
 
 def check(cfg, path, world_size=None):
     """Return (errors, opens) as lists of message lines."""
-    errs, opens = comment_errors(path), []
+    errs, opens = source_errors(path), []
+    required = {k for k, _ in walk(config.load_config(REFERENCE))}
+    have = {k for k, _ in walk(cfg)}
+    errs += [f"missing: {k}" for k in sorted(required - have)]
+    errs += [f"unknown: {k}" for k in sorted(have - required)]
     g = lambda k: config.get(cfg, k)  # noqa: E731
     open_keys = set(cfg.get("open_keys") or [])
+    errs += [f"unknown: open_keys entry {k}" for k in sorted(open_keys - required)]
     moe_off = not g("moe.enabled")
     for key, v in walk(cfg):
         if v is None and not (moe_off and key.startswith("moe.")):  # dense arm: moe sizes unused
             if key in open_keys:
                 opens.append(f"open: {key} ({WHO.get(key, 'TSAI 31 Oct')})")
             elif key not in NULLABLE:
-                errs.append(f"error: {key} is null and not in open_keys")
+                errs.append(f"no value: {key}")
 
     names = [d["name"] for d in cfg.get("datasets") or []]
     prev = None
@@ -81,8 +92,8 @@ def check(cfg, path, world_size=None):
         if (i == 0 and sf != 0) or (prev is not None and not sf > prev):
             errs.append(f"error: data_stages[{i}].start_frac {sf} not ascending from 0.0")
         prev = sf
-        if abs(sum(w.values()) - 1) > 1e-6:
-            errs.append(f"error: data_stages[{i}] ({st.get('name')}) weights sum to {sum(w.values()):.6g}, not 1")
+        if abs(sum(w.values()) - 1) > 1e-9:  # numpy rng.choice rejects ~1e-8 off
+            errs.append(f"error: data_stages[{i}] ({st.get('name')}) weights sum to {sum(w.values())!r}, not 1")
         for k in w:
             if k not in names:
                 errs.append(f"error: data_stages[{i}] weight key {k!r} not in datasets")
