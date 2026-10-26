@@ -32,8 +32,8 @@
 | `harness/compare_runs.py` | The gates: `--exact` (byte-identical `losses.tsv`), `--rtol R`, `--gate` (step-0 CE ≈ ln V, loss falls, no NaN). |
 | `results/kaggle_matrix_300/` | Correctness of every layout on 2× T4 (300 steps): `compare.txt`, `status.txt`, one `losses.tsv` per run. |
 | `results/moe_sweep_1000/` | The MoE iteration: 5 arms × 1,000 steps, DP=2, same notebook runtime. Full `metrics.jsonl` per arm plus `summary.json`. |
-| `kaggle/` | Generators for the two Kaggle notebooks (`make_nb.py`: layout matrix; `make_moe_nb.py`: MoE sweep). |
-| `index.html` | The visual summary. |
+| `kaggle/` | Generators for the two Kaggle notebooks (`make_nb.py`: layout matrix; `make_moe_nb.py`: MoE sweep) and for the summary page (`build_index.py` + `index.template.html`). |
+| `index.html` | The visual summary: interactive charts (toggle arms, hover for values), a sortable results table. Rebuild with `python kaggle/build_index.py index.html` from this folder. |
 
 ## Model
 

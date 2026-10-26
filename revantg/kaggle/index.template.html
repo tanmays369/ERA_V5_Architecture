@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Team 5 · Tiny MoE harness v0 · Revant Gupta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Arctic (designdotmd): glacier white, ice blue, flat, one accent. */
+:root{
+  --primary:#0E1A24; --secondary:#627A8B; --accent:#2563EB; --neutral:#EEF4F9; --surface:#FFFFFF;
+  --line:#DCE6EE; --line-soft:#E8EFF5; --accent-soft:#E6EEFD; --good:#0F766E; --good-soft:#E3F4F1;
+  --r-sm:6px; --r-md:12px; --r-lg:20px;
+  --font:Manrope,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --ease:cubic-bezier(0.2,0,0,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{margin:0;background:var(--neutral);color:var(--primary);font:400 16px/1.6 var(--font);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+a{color:var(--accent);text-decoration:none;text-underline-offset:3px}
+a:hover{text-decoration:underline}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:var(--r-sm)}
+code{font:500 0.84em var(--mono);background:var(--neutral);border:1px solid var(--line);padding:1px 6px;border-radius:var(--r-sm);white-space:nowrap}
+b,strong{font-weight:700}
+.num{font-variant-numeric:tabular-nums}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:20;background:rgba(238,244,249,.86);backdrop-filter:saturate(1.4) blur(12px);-webkit-backdrop-filter:saturate(1.4) blur(12px);border-bottom:1px solid var(--line)}
+.nav-in{max-width:1160px;margin:0 auto;padding:0 28px;height:60px;display:flex;align-items:center;gap:24px}
+.brand{font-weight:800;font-size:15px;letter-spacing:-0.01em;white-space:nowrap;color:var(--primary)}
+.brand span{color:var(--secondary);font-weight:500}
+.nav ol{list-style:none;margin:0 0 0 auto;padding:0;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.nav ol::-webkit-scrollbar{display:none}
+.nav ol a{display:block;padding:7px 12px;border-radius:999px;color:var(--secondary);font-size:14px;font-weight:600;white-space:nowrap;transition:background .2s var(--ease),color .2s var(--ease)}
+.nav ol a:hover{text-decoration:none;color:var(--primary);background:var(--surface)}
+.nav ol a[aria-current="true"]{color:var(--accent);background:var(--accent-soft)}
+
+.wrap{max-width:1160px;margin:0 auto;padding:0 28px 96px}
+
+/* hero */
+.hero{padding:64px 0 32px}
+.label{font-size:0.72rem;letter-spacing:0.06em;text-transform:uppercase;font-weight:700;color:var(--secondary)}
+h1{font-size:clamp(2.1rem,4.6vw,3.75rem);line-height:1.06;letter-spacing:-0.03em;font-weight:700;margin:14px 0 20px;max-width:18ch;text-wrap:balance}
+h1 em{font-style:normal;color:var(--secondary)}
+.lede{font-size:1.125rem;color:#33495A;max-width:68ch;margin:0;text-wrap:pretty}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.chip{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:13px;font-weight:600;color:#33495A}
+.chip .ok{width:8px;height:8px;border-radius:50%;background:var(--good)}
+.chip.cta{background:var(--accent);border-color:var(--accent);color:#fff}
+.chip.cta:hover{text-decoration:none;background:#1D4FD8}
+
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:40px}
+.kpi{background:var(--surface);border-radius:var(--r-lg);padding:24px;border:1px solid var(--line-soft)}
+.kpi .v{font-size:2.25rem;font-weight:700;letter-spacing:-0.03em;line-height:1;font-variant-numeric:tabular-nums}
+.kpi .v small{font-size:1rem;color:var(--secondary);font-weight:600;letter-spacing:0}
+.kpi .v.ok{color:var(--good)}
+.kpi .k{margin-top:12px;font-size:14px;line-height:1.5;color:var(--secondary)}
+.kpi .k b{color:var(--primary);font-weight:600}
+
+/* sections */
+section{padding-top:72px}
+.sh{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:24px;flex-wrap:wrap}
+h2{font-size:2.25rem;line-height:1.15;letter-spacing:-0.02em;font-weight:700;margin:8px 0 0;text-wrap:balance}
+.sh p{margin:0;color:var(--secondary);max-width:56ch;font-size:15px}
+h3{font-size:1.05rem;font-weight:700;margin:0 0 4px;letter-spacing:-0.01em}
+.card{background:var(--surface);border-radius:var(--r-lg);padding:28px;border:1px solid var(--line-soft)}
+.card + .card,.grid + .card,.card + .grid{margin-top:16px}
+.card .sub{color:var(--secondary);font-size:14px;margin:0 0 16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid.g3{grid-template-columns:1.25fr 1fr}
+
+ul.ticks{list-style:none;margin:0;padding:0;display:grid;gap:14px}
+ul.ticks li{position:relative;padding-left:30px}
+ul.ticks li::before{content:"";position:absolute;left:0;top:3px;width:18px;height:18px;border-radius:50%;background:var(--accent-soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8.2l2.3 2.3 4.7-5' fill='none' stroke='%232563EB' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/14px no-repeat}
+ul.dots{margin:0;padding-left:18px;display:grid;gap:8px;font-size:15px}
+ul.dots li::marker{color:var(--secondary)}
+.callout{margin-top:20px;padding:16px 20px;border-radius:var(--r-md);background:var(--neutral);font-size:15px;color:#33495A}
+
+/* pipeline */
+.pipe{display:grid;grid-template-columns:repeat(6,1fr);gap:0;counter-reset:s;margin-bottom:28px}
+.stage{position:relative;padding:18px 18px 18px 0;border-top:2px solid var(--line)}
+.stage::before{counter-increment:s;content:counter(s,decimal-leading-zero);position:absolute;top:-13px;left:0;background:var(--surface);padding-right:8px;font:600 12px var(--mono);color:var(--accent)}
+.stage b{display:block;font-size:15px;margin-bottom:4px}
+.stage span{font-size:13px;line-height:1.5;color:var(--secondary);display:block}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:32px;padding-top:24px;border-top:1px solid var(--line-soft)}
+.cmd{display:block;margin:8px 0 14px;padding:12px 14px;background:var(--primary);color:#E6EEF5;border-radius:var(--r-md);font:500 13px/1.5 var(--mono);white-space:pre-wrap;word-break:break-word}
+
+/* legend toggles */
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.legend button{font:600 13px var(--font);display:inline-flex;align-items:center;gap:8px;padding:7px 14px;min-height:36px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--primary);cursor:pointer;transition:opacity .2s var(--ease),background .2s var(--ease),transform .15s var(--ease)}
+.legend button:hover{background:var(--neutral)}
+.legend button:active{transform:scale(0.96)}
+.legend button[aria-pressed="false"]{opacity:.42}
+.legend button[aria-pressed="false"] .sw{background:transparent!important;box-shadow:inset 0 0 0 2px currentColor}
+.sw{width:10px;height:10px;border-radius:50%;flex:none}
+.legend .hint{margin-left:auto;align-self:center;font-size:12px;color:var(--secondary)}
+
+/* charts */
+.chart{position:relative}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart .grid line{stroke:var(--line-soft)}
+.chart .zero{stroke:var(--secondary);stroke-dasharray:4 4}
+.chart .ax{font:500 11px var(--mono);fill:var(--secondary)}
+.chart .ttl{font:600 11px var(--font);fill:var(--secondary);letter-spacing:.04em;text-transform:uppercase}
+.chart path.s{fill:none;stroke-width:2.25;stroke-linejoin:round;stroke-linecap:round;transition:opacity .2s var(--ease)}
+.chart .xh{stroke:var(--primary);stroke-opacity:.25;visibility:hidden}
+.chart circle.pt{visibility:hidden;stroke:#fff;stroke-width:2}
+.chart.hover .xh,.chart.hover circle.pt{visibility:visible}
+.tip{position:absolute;pointer-events:none;background:var(--primary);color:#fff;border-radius:var(--r-md);padding:10px 12px;font-size:12px;line-height:1.55;min-width:190px;opacity:0;transform:translateY(4px);transition:opacity .15s var(--ease),transform .15s var(--ease);z-index:5}
+.chart.hover .tip{opacity:1;transform:none}
+.tip .h{font-weight:700;margin-bottom:4px;color:#B9C9D6}
+.tip .r{display:flex;align-items:center;gap:8px}
+.tip .r .n{margin-left:auto;font-family:var(--mono);font-variant-numeric:tabular-nums}
+.seg{display:inline-flex;background:var(--neutral);border-radius:999px;padding:3px}
+.seg button{font:600 13px var(--font);border:0;background:transparent;color:var(--secondary);padding:6px 14px;border-radius:999px;cursor:pointer;min-height:32px;transition:background .2s var(--ease),color .2s var(--ease)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--primary);box-shadow:0 1px 2px rgba(14,26,36,.08)}
+.chead{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:12px;flex-wrap:wrap}
+
+/* tables */
+.tw{overflow-x:auto;margin:0 -28px;padding:0 28px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{font-size:0.72rem;letter-spacing:0.06em;text-transform:uppercase;color:var(--secondary);font-weight:700;text-align:right;padding:0 12px 12px;vertical-align:bottom;line-height:1.35;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left;padding-left:0}
+th button{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+th button:hover{color:var(--primary)}
+th button::after{content:"↕";opacity:.35;font-size:11px}
+th[aria-sort="ascending"] button::after{content:"↑";opacity:1;color:var(--accent)}
+th[aria-sort="descending"] button::after{content:"↓";opacity:1;color:var(--accent)}
+td{padding:14px 12px;text-align:right;border-bottom:1px solid var(--line-soft);font-variant-numeric:tabular-nums;white-space:nowrap}
+tbody tr{transition:background .15s var(--ease)}
+tbody tr:hover{background:#F7FAFC}
+tr:last-child td{border-bottom:0}
+td .arm{display:inline-flex;align-items:center;gap:10px;font-weight:600}
+.best{font-weight:700;color:var(--accent)}
+.delta{display:inline-block;padding:2px 8px;border-radius:var(--r-sm);font-weight:600;font-size:13px}
+.delta.neg{background:var(--good-soft);color:var(--good)}
+.delta.zero{background:var(--neutral);color:var(--secondary)}
+.mute{color:var(--secondary)}
+
+.checks{list-style:none;margin:0;padding:0}
+.checks li{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;padding:13px 0;border-bottom:1px solid var(--line-soft);font-size:14px}
+.checks li:last-child{border-bottom:0}
+.pass{display:inline-flex;align-items:center;gap:6px;font-weight:600;font-size:13px;color:var(--good);background:var(--good-soft);padding:3px 10px;border-radius:999px;white-space:nowrap}
+.info{font:500 13px var(--mono);color:var(--secondary);white-space:nowrap}
+
+/* bars */
+.bars{display:grid;gap:10px}
+.bar{display:grid;grid-template-columns:minmax(150px,220px) 1fr 76px;gap:14px;align-items:center;font-size:14px}
+.bar .t{height:12px;background:var(--neutral);border-radius:999px;overflow:hidden}
+.bar .f{height:100%;border-radius:999px;transform-origin:left;animation:grow .7s var(--ease) both}
+.bar .n{text-align:right;font:500 13px var(--mono);font-variant-numeric:tabular-nums}
+.bar .lbl{display:flex;align-items:center;gap:8px;min-width:0}
+.bar .lbl small{color:var(--secondary);font-weight:500}
+.tag{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--secondary);background:var(--neutral);padding:2px 6px;border-radius:4px}
+@keyframes grow{from{transform:scaleX(0)}}
+
+/* bugs */
+.bugs{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.bug{background:var(--surface);border-radius:var(--r-lg);padding:22px 24px;border:1px solid var(--line-soft)}
+.bug h3{display:flex;align-items:center;gap:10px}
+.bug p{margin:6px 0 0;font-size:14px;color:#33495A}
+.fixed{font-size:0.72rem;letter-spacing:.06em;text-transform:uppercase;font-weight:700;color:var(--good);margin-left:auto}
+
+details{border-top:1px solid var(--line-soft);margin-top:20px;padding-top:4px}
+summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;padding:12px 0;font-weight:600;font-size:14px;color:var(--accent)}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"";width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(-45deg);transition:transform .2s var(--ease)}
+details[open] summary::before{transform:rotate(45deg)}
+
+footer{margin-top:72px;padding-top:28px;border-top:1px solid var(--line);color:var(--secondary);font-size:14px;display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center}
+
+@media (max-width:960px){
+  .kpis{grid-template-columns:1fr 1fr}
+  .pipe{grid-template-columns:repeat(3,1fr);row-gap:24px}
+  .grid,.grid.g3,.cols{grid-template-columns:1fr}
+  .nav .brand span{display:none}
+}
+@media (max-width:560px){
+  .wrap,.nav-in{padding-left:18px;padding-right:18px}
+  .kpis,.pipe{grid-template-columns:1fr}
+  .card{padding:20px}.tw{margin:0 -20px;padding:0 20px}
+  .bar{grid-template-columns:1fr 64px}.bar .t{grid-column:1/-1;grid-row:2}
+  .nav .brand{display:none}.nav ol{margin-left:0}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+@media print{.nav{display:none}.card,.kpi,.bug{break-inside:avoid}body{background:#fff}}
+</style>
+</head>
+<body>
+<nav class="nav" aria-label="Sections"><div class="nav-in">
+  <div class="brand">Tiny MoE harness v0 <span>· Team 5</span></div>
+  <ol>
+    <li><a href="#ask">The ask</a></li>
+    <li><a href="#arch">Architecture</a></li>
+    <li><a href="#moe">MoE sweep</a></li>
+    <li><a href="#layouts">Layouts</a></li>
+    <li><a href="#bugs">Bugs</a></li>
+    <li><a href="#next">Next</a></li>
+  </ol>
+</div></nav>
+
+<main class="wrap">
+<header class="hero">
+  <div class="label">ERA V5 · Team 5 Architecture · Week 1 · Revant Gupta</div>
+  <h1>Tiny MoE harness v0 <em>is deterministic on 2× T4, and MoE beats dense</em></h1>
+  <p class="lede">My contribution to the team comparison agreed on the 26 Oct call: a config, a config checker and a training harness. It trains a Kronecker-embedding MoE decoder with Muon + AdamW, and supports DP, TP, PP and ZeRO-1. Two runs with seed 1234 give byte-identical loss at every step. Every MoE arm keeps the active FFN width equal to dense.</p>
+  <div class="chips">
+    <a class="chip cta" href="https://github.com/theschoolofai/era-v5-lab/pull/55">Open lab PR #55 →</a>
+    <span class="chip"><span class="ok"></span>pr-guard pass</span>
+    <span class="chip">Kaggle 2× Tesla T4 · torch 2.11 · fp32</span>
+    <span class="chip">BrahmicTokenizer-131K · 12 HF sources · ~9.0M tokens</span>
+    <span class="chip">26 Oct 2026</span>
+  </div>
+  <div class="kpis">
+    <div class="kpi"><div class="v ok">5<small> / 5</small></div><div class="k"><b>Same-seed pairs byte-identical</b> over 300 steps (dense DP, TP, PP; MoE 1 GPU, DP)</div></div>
+    <div class="kpi"><div class="v">6.281</div><div class="k"><b>Best held-out CE</b> after 1,000 steps (8 experts, top-1 + 1 shared). Dense: 6.314</div></div>
+    <div class="kpi"><div class="v">≤ 2e-7</div><div class="k"><b>Max relative loss gap</b> of dense DP, TP, PP and ZeRO-1 vs the 1-GPU run</div></div>
+    <div class="kpi"><div class="v ok">0</div><div class="k"><b>NaNs or dead experts</b> in any run. An injected NaN stops the run; resuming reproduces it exactly</div></div>
+  </div>
+</header>
+
+<section id="ask">
+  <div class="sh"><div><div class="label">01 · Scope</div><h2>What the 26 Oct call asked for</h2></div></div>
+  <div class="grid g3">
+    <div class="card"><ul class="ticks">
+      <li>Four files due <b>Tue 27 Oct</b>: the MoE config, the config check, the harness and plan_v0. The submission is a skeleton: <b>keys and structure matter now</b>; values come later from TSAI (Rohan).</li>
+      <li>Each person pushes their own code under <b>their own folder</b>. The team then cherry-picks the best parts into the skeleton for the main ERA-V5 repo.</li>
+      <li>Known gaps in every config: the data-mixture weights and the distributed parameters (dp, tp, pp). SmolLM3 and nanotron are the reference.</li>
+      <li>Seed 1234: two runs must give the same loss at every step.</li>
+    </ul></div>
+    <div class="card">
+      <h3>How this folder closes both gaps</h3>
+      <p class="sub" style="margin-top:8px">Data weighting uses SmolLM3-style <code>data_stages</code>: stable → stage2 → anneal at 0 / 0.73 / 0.82 of the steps.</p>
+      <p class="sub">The parallelism block uses nanotron <code>ParallelismArgs</code> names:</p>
+      <div style="display:flex;flex-wrap:wrap;gap:6px"><code>dp</code><code>tp</code><code>pp</code><code>pp_engine</code><code>tp_mode</code><code>zero_stage</code><code>recompute_layer</code><code>expert_parallel_size</code></div>
+      <div class="callout" style="margin-top:20px">Both run on real hardware.</div>
+    </div>
+  </div>
+</section>
+
+<section id="arch">
+  <div class="sh"><div><div class="label">02 · Design</div><h2>Architecture at a glance</h2></div></div>
+  <div class="card">
+    <div class="pipe">
+      <div class="stage"><b>Tokens</b><span>BrahmicTokenizer-131K (pinned sha), EOS id 36</span></div>
+      <div class="stage"><b>Embed</b><span>Kronecker codec (char 256 × pos 32) → trainable projection</span></div>
+      <div class="stage"><b>Attention</b><span>GQA, QK-norm, RoPE θ=50k, SDPA (math backend)</span></div>
+      <div class="stage"><b>FFN</b><span>SwiGLU, or MoE: sigmoid router + aux-free bias, dropless</span></div>
+      <div class="stage"><b>Head</b><span>Untied, CE + z-loss 1e-4, fp32</span></div>
+      <div class="stage"><b>Optim</b><span>Muon on 2D weights and expert slices; AdamW elsewhere; WSD 2% / 10%</span></div>
+    </div>
+    <div class="cols">
+      <div><h3>Config</h3><ul class="dots" style="margin-top:10px">
+        <li><code>configs/config_v0.yaml</code>: every leaf has a <code># source</code> comment citing the KE code / arXiv 2605.29459, lessons, an Admin ruling or SmolLM3. Sizes are <code>open_keys</code>.</li>
+        <li><code>harness/check_config.py</code>: 0 errors, 15 open. Every small config: 0 errors, 1 open (the KE2 shape from G4).</li>
+        <li>Small configs <code>extends:</code> a parent with deep merge. <code>configs/small/t4_moe.yaml</code> is the G6 file.</li>
+      </ul></div>
+      <div><h3>Harness</h3>
+        <span class="cmd">torchrun harness/train.py --config C --out DIR [--set k=v]</span>
+        <ul class="dots">
+          <li>A batch depends only on (seed, step), never on the layout, so DP, TP and PP see identical data.</li>
+          <li>Outputs: <code>losses.tsv</code> (exact repr), <code>metrics.jsonl</code> with the six G8 names, checkpoints. On NaN: <code>NAN_REPORT.json</code> plus the resume command.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="moe">
+  <div class="sh"><div><div class="label">03 · Results</div><h2>MoE sweep: 1,000 steps, DP=2</h2></div>
+    <p>Every MoE arm keeps the <b>active</b> FFN width per token equal to the dense d_ff of 768 (top_k × d_ff + shared × d_ff), so this compares routing and capacity, not compute. Seed 1234, same data, WSD lr 3e-4, 4 layers, d_model 256, seq 256, batch 16.</p></div>
+
+  <div class="card">
+    <div class="legend" id="legend" role="group" aria-label="Show or hide arms"></div>
+    <div class="chead">
+      <div><h3>Training CE gap to dense</h3><p class="sub" style="margin:0">50-step rolling mean of (arm − dense). Below the dashed line, MoE is ahead.</p></div>
+    </div>
+    <div class="chart" id="gap"></div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="chead">
+        <div><h3>Held-out CE</h3><p class="sub" style="margin:0">Evaluated every 50 steps</p></div>
+        <div class="seg" role="group" aria-label="Range"><button aria-pressed="false" data-from="0">All</button><button aria-pressed="true" data-from="500">Steps 500+</button></div>
+      </div>
+      <div class="chart" id="ho"></div>
+    </div>
+    <div class="card">
+      <div class="chead"><div><h3>Throughput</h3><p class="sub" style="margin:0">Tokens/s on 2× T4, DP=2</p></div></div>
+      <div class="bars" id="tps"></div>
+      <p class="sub" style="margin:18px 0 0">The 16-expert arm is 2.7× slower than dense on T4 because the reference expert loop doesn't fuse.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="chead"><div><h3>All arms</h3><p class="sub" style="margin:0">Click a column to sort. Best value per column in blue.</p></div></div>
+    <div class="tw"><table id="arms"><thead><tr>
+      <th aria-sort="none"><button data-k="label">Arm</button></th>
+      <th aria-sort="none"><button data-k="params">Params</button></th>
+      <th aria-sort="none"><button data-k="ce">Train CE (last 100)</button></th>
+      <th aria-sort="ascending"><button data-k="held">Held-out CE</button></th>
+      <th aria-sort="none"><button data-k="delta">Δ vs dense</button></th>
+      <th aria-sort="none"><button data-k="bpb">BPB</button></th>
+      <th aria-sort="none"><button data-k="tps">tok/s</button></th>
+      <th aria-sort="none"><button data-k="dead">Dead experts (max)</button></th>
+      <th aria-sort="none"><button data-k="top">Top expert share (max)</button></th>
+    </tr></thead><tbody></tbody></table></div>
+    <details><summary>Read with care</summary>
+      <p class="sub" style="margin:0 0 8px">This is one seed and 1,000 steps on about 9M tokens. The gaps are small (≤ 0.033 nats) but consistent from step 500 onward. Every MoE arm beats dense. The shared expert with top-1 and the 8-expert top-2 arm lead. The fine-grained arm with 16 experts and top-4 balances best but is 2.7× slower on T4, because the reference expert loop doesn't fuse. A 6th arm with no load balancing, testing for router collapse, hit a logging bug (now fixed); its re-run is pending.</p>
+    </details>
+  </div>
+</section>
+
+<section id="layouts">
+  <div class="sh"><div><div class="label">04 · Correctness</div><h2>Parallel layouts on 2× T4</h2></div><p>300 steps per run. Same-seed pairs must match byte-for-byte; different layouts may differ only by reduction order.</p></div>
+  <div class="grid">
+    <div class="card"><h3>Checks</h3>
+      <ul class="checks" style="margin-top:8px">
+        <li><span>Dense DP=2, run twice</span><span class="pass">✓ 300 steps byte-identical</span></li>
+        <li><span>Dense TP=2, run twice</span><span class="pass">✓ byte-identical</span></li>
+        <li><span>Dense PP=2 (1F1B, 4 micro-batches), run twice</span><span class="pass">✓ byte-identical</span></li>
+        <li><span>MoE 1 GPU and MoE DP=2, each run twice</span><span class="pass">✓ byte-identical</span></li>
+        <li><span>NaN injected at step 150, resumed from step 100</span><span class="pass">✓ identical to uninterrupted</span></li>
+        <li><span>Gate: step-0 CE ≈ ln 131072 = 11.78</span><span class="pass">✓ 11.84 dense / 11.82 MoE</span></li>
+        <li><span>DP, TP, PP, ZeRO-1 vs 1 GPU</span><span class="info">max rel 2e-7 · fp32 order</span></li>
+        <li><span>MoE DP, PP vs MoE 1 GPU</span><span class="info">max rel 9e-5 · near-tied routing</span></li>
+      </ul>
+    </div>
+    <div class="card"><h3>Throughput by layout</h3><p class="sub">Tokens/s, 300-step runs</p>
+      <div class="bars" id="lay"></div>
+      <p class="sub" style="margin:18px 0 0">TP is slow on T4 because it all-reduces over PCIe at this tiny width. PP holds about 1/10 of the parameters per rank, since the 131K head sits on the last stage.</p>
+    </div>
+  </div>
+</section>
+
+<section id="bugs">
+  <div class="sh"><div><div class="label">05 · Hardening</div><h2>Bugs found on real hardware</h2></div><p>All fixed. None reproduced on the local torch 2.14 CPU runs.</p></div>
+  <div class="bugs">
+    <div class="bug"><h3>PP crashed on torch 2.11 <span class="fixed">Fixed</span></h3><p><code>PipelineStage</code> validates input strides, and <code>x[:, :-1]</code> is non-contiguous. Fixed with <code>.contiguous()</code>.</p></div>
+    <div class="bug"><h3>DDP over gloo <span class="fixed">Fixed</span></h3><p>Failed to broadcast an int16 length buffer. Now stored as int64.</p></div>
+    <div class="bug"><h3><code>compare_runs --exact</code> <span class="fixed">Fixed</span></h3><p>Passed two empty loss files, so a crash looked like a pass. It now fails.</p></div>
+    <div class="bug"><h3>MoE metrics <span class="fixed">Fixed</span></h3><p>Crashed when <code>seq_aux_loss_coef = 0</code>.</p></div>
+    <div class="bug"><h3>Lab pr-guard <span class="fixed">Fixed</span></h3><p>The email regex matched a top-level decorator line in the diff. Rewritten as a <code>with</code> block.</p></div>
+  </div>
+</section>
+
+<section id="next">
+  <div class="sh"><div><div class="label">06 · Hand-off</div><h2>What to cherry-pick, and what's next</h2></div></div>
+  <div class="grid">
+    <div class="card"><h3>Candidates for the team skeleton</h3><ul class="ticks" style="margin-top:14px">
+      <li>The <code>extends</code> + <code>--set</code> config system and the source-comment checker</li>
+      <li>Layout-independent data order: one config runs on any dp/tp/pp</li>
+      <li>The <code>compare_runs.py</code> gate (exact / rtol / gate)</li>
+      <li>MoE with aux-free bias balancing plus Muon on each expert slice</li>
+    </ul></div>
+    <div class="card"><h3>Open / next</h3><ul class="dots" style="margin-top:14px">
+      <li>The KE2 output shape from G4 <span class="tag">Tue 27 Oct</span></li>
+      <li>The G8 logger, integrated <span class="tag">Thu 29 Oct</span></li>
+      <li>plan_v0 arms: expert granularity, shared expert, Muon vs AdamW, LR×WD law, intra-document masking (SmolLM3)</li>
+      <li>Code data: <code>the-stack-smol</code> needs an HF token, so codeparrot (Python only) is used for now</li>
+    </ul></div>
+  </div>
+</section>
+
+<footer>
+  <span>Folder map:</span><code>configs/</code><code>harness/</code><code>results/kaggle_matrix_300/</code><code>results/moe_sweep_1000/</code><code>kaggle/</code>
+  <span style="margin-left:auto">Charts drawn from the raw <code>losses.tsv</code> / <code>summary.json</code> in this folder.</span>
+</footer>
+</main>
+
+<script>
+const D=/*DATA*/null;
+const NS="http://www.w3.org/2000/svg";
+const on=new Set(D.arms.map(a=>a.key));
+const dense=D.arms[0];
+const fmt=(v,d=4)=>v==null?"–":v.toFixed(d);
+const el=(t,a={},p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e};
+
+function nice(lo,hi,n=5){const r=hi-lo,st=Math.pow(10,Math.floor(Math.log10(r/n))),m=[1,2,2.5,5,10].find(m=>r/(st*m)<=n)*st;return{lo:Math.floor(lo/m)*m,hi:Math.ceil(hi/m)*m,step:m}}
+
+function lineChart(host,{get,w=880,h=320,from=0,yfmt=v=>v.toFixed(2),ylab,zero=false,tipFmt=v=>v.toFixed(4)}){
+  host.innerHTML="";
+  w=Math.max(host.clientWidth,300);if(w<560)h=240;
+  const P={l:52,r:16,t:12,b:34};
+  const arms=D.arms.filter(a=>on.has(a.key));
+  const ser=arms.map(a=>({a,pts:get(a).filter(p=>p[0]>=from)}));
+  const all=ser.flatMap(s=>s.pts);
+  if(!all.length){host.innerHTML='<p class="sub">Select at least one arm.</p>';return}
+  const xs=all.map(p=>p[0]),ys=all.map(p=>p[1]);
+  const x0=Math.min(...xs),x1=Math.max(...xs);
+  let y=nice(Math.min(...ys,zero?0:Infinity),Math.max(...ys,zero?0:-Infinity));
+  const X=v=>P.l+(v-x0)/(x1-x0||1)*(w-P.l-P.r), Y=v=>h-P.b-(v-y.lo)/(y.hi-y.lo)*(h-P.t-P.b);
+  const svg=el("svg",{viewBox:`0 0 ${w} ${h}`,role:"img","aria-label":ylab},host);
+  const g=el("g",{class:"grid"},svg);
+  for(let v=y.lo;v<=y.hi+1e-9;v+=y.step){el("line",{x1:P.l,x2:w-P.r,y1:Y(v),y2:Y(v)},g);el("text",{x:P.l-8,y:Y(v)+4,"text-anchor":"end",class:"ax"},svg).textContent=yfmt(v)}
+  const xt=nice(x0,x1,6);for(let v=xt.lo;v<=x1;v+=xt.step){if(v<x0)continue;el("text",{x:X(v),y:h-P.b+20,"text-anchor":"middle",class:"ax"},svg).textContent=v}
+  if(zero)el("line",{x1:P.l,x2:w-P.r,y1:Y(0),y2:Y(0),class:"zero"},svg);
+  for(const s of ser)el("path",{class:"s",stroke:s.a.color,d:s.pts.map((p,i)=>(i?"L":"M")+X(p[0]).toFixed(1)+","+Y(p[1]).toFixed(1)).join("")},svg);
+  const xh=el("line",{class:"xh",y1:P.t,y2:h-P.b},svg);
+  const dots=ser.map(s=>el("circle",{class:"pt",r:4.5,fill:s.a.color},svg));
+  const tip=document.createElement("div");tip.className="tip";host.appendChild(tip);
+  const steps=[...new Set(xs)].sort((a,b)=>a-b);
+  const move=e=>{
+    const r=svg.getBoundingClientRect(),sx=(e.clientX-r.left)/r.width*w;
+    const st=steps.reduce((b,v)=>Math.abs(X(v)-sx)<Math.abs(X(b)-sx)?v:b,steps[0]);
+    xh.setAttribute("x1",X(st));xh.setAttribute("x2",X(st));
+    const rows=ser.map((s,i)=>{const p=s.pts.find(p=>p[0]===st);if(p){dots[i].setAttribute("cx",X(p[0]));dots[i].setAttribute("cy",Y(p[1]))}return{a:s.a,v:p?p[1]:null}}).sort((a,b)=>(a.v??1e9)-(b.v??1e9));
+    tip.innerHTML=`<div class="h">Step ${st}</div>`+rows.map(o=>`<div class="r"><span class="sw" style="background:${o.a.color}"></span>${o.a.label}<span class="n">${o.v==null?"–":tipFmt(o.v)}</span></div>`).join("");
+    const px=X(st)/w*r.width;tip.style.left=Math.min(Math.max(px+14,0),r.width-tip.offsetWidth-4)+(px+14+tip.offsetWidth>r.width?-(tip.offsetWidth+28):0)+"px";tip.style.top="8px";
+    host.classList.add("hover");
+  };
+  svg.addEventListener("pointermove",move);svg.addEventListener("pointerdown",move);
+  svg.addEventListener("pointerleave",()=>host.classList.remove("hover"));
+}
+
+let hoFrom=500;
+function drawCharts(){
+  lineChart(document.getElementById("gap"),{get:a=>a.gap,zero:true,ylab:"Train CE minus dense (nats)",yfmt:v=>(v>0?"+":"")+v.toFixed(2),tipFmt:v=>(v>0?"+":"")+v.toFixed(4)});
+  lineChart(document.getElementById("ho"),{get:a=>a.ho,from:hoFrom,w:440,h:300,ylab:"Held-out CE",yfmt:v=>v.toFixed(hoFrom?2:1)});
+}
+
+function bars(host,rows){
+  const max=Math.max(...rows.map(r=>r.v));
+  host.innerHTML=rows.map(r=>`<div class="bar"><div class="lbl">${r.l}</div><div class="t"><div class="f" style="width:${(r.v/max*100).toFixed(1)}%;background:${r.c}"></div></div><div class="n">${r.v.toLocaleString("en-US",{maximumFractionDigits:0})}</div></div>`).join("");
+}
+bars(document.getElementById("tps"),D.arms.map(a=>({l:`<span class="sw" style="background:${a.color}"></span>${a.label}`,v:a.tps,c:a.color})));
+bars(document.getElementById("lay"),D.layouts.map(([m,l,v])=>({l:`<span class="tag">${m}</span>${l}`,v,c:m==="MoE"?"#2563EB":"#8A9DAB"})));
+
+// legend toggles
+const lg=document.getElementById("legend");
+for(const a of D.arms){const b=document.createElement("button");b.setAttribute("aria-pressed","true");b.innerHTML=`<span class="sw" style="background:${a.color}"></span>${a.label}`;b.onclick=()=>{on.has(a.key)?on.delete(a.key):on.add(a.key);b.setAttribute("aria-pressed",on.has(a.key));drawCharts()};lg.appendChild(b)}
+lg.insertAdjacentHTML("beforeend",'<span class="hint">Click to toggle · hover charts for values</span>');
+document.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>{hoFrom=+b.dataset.from;document.querySelectorAll(".seg button").forEach(x=>x.setAttribute("aria-pressed",x===b));drawCharts()});
+drawCharts();
+let rz;addEventListener("resize",()=>{clearTimeout(rz);rz=setTimeout(drawCharts,120)});
+
+// sortable table
+const rows=D.arms.map(a=>({...a,delta:a.held-dense.held}));
+const lowBetter={ce:1,held:1,delta:1,bpb:1,dead:1,top:1};
+const best={};for(const k of ["ce","held","delta","bpb","tps"]){const v=rows.map(r=>r[k]);best[k]=lowBetter[k]?Math.min(...v):Math.max(...v)}
+let sortK="held",dir=1;
+function renderTable(){
+  const tb=document.querySelector("#arms tbody");
+  const r=[...rows].sort((a,b)=>{const x=a[sortK],y=b[sortK];if(x==null)return 1;if(y==null)return -1;return(typeof x==="string"?x.localeCompare(y):x-y)*dir});
+  tb.innerHTML=r.map(a=>{const B=k=>a[k]===best[k]&&a.key!=="D0_dense"?' class="best"':"";
+    const d=a.key==="D0_dense"?'<span class="delta zero">baseline</span>':`<span class="delta neg">${a.delta.toFixed(4)}</span>`;
+    return `<tr><td><span class="arm"><span class="sw" style="background:${a.color}"></span>${a.label}</span></td><td>${(a.params/1e6).toFixed(1)}M</td><td${B("ce")}>${fmt(a.ce,3)}</td><td${B("held")}>${fmt(a.held)}</td><td>${d}</td><td${B("bpb")}>${fmt(a.bpb)}</td><td${a.tps===best.tps?' class="best"':""}>${Math.round(a.tps).toLocaleString("en-US")}</td><td class="${a.dead==null?"mute":""}">${a.dead??"–"}</td><td class="${a.top==null?"mute":""}">${fmt(a.top,2)}</td></tr>`}).join("");
+}
+document.querySelectorAll("#arms th button").forEach(b=>b.onclick=()=>{const k=b.dataset.k;dir=sortK===k?-dir:(lowBetter[k]||k==="label"?1:-1);sortK=k;document.querySelectorAll("#arms th").forEach(th=>th.setAttribute("aria-sort",th.contains(b)?(dir>0?"ascending":"descending"):"none"));renderTable()});
+renderTable();
+
+// scrollspy
+const links=[...document.querySelectorAll(".nav ol a")];
+const io=new IntersectionObserver(es=>{for(const e of es)if(e.isIntersecting)links.forEach(l=>l.setAttribute("aria-current",l.hash==="#"+e.target.id))},{rootMargin:"-40% 0px -55% 0px"});
+document.querySelectorAll("section[id]").forEach(s=>io.observe(s));
+</script>
+</body>
+</html>
