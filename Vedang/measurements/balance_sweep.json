@@ -1,0 +1,130 @@
+{
+  "id": "balance_sweep",
+  "date": "2026-10-27",
+  "config": "configs/small_cpu.yaml",
+  "steps": 100,
+  "seeds": [
+    1234
+  ],
+  "tol_nats": 0.02,
+  "healthy_rule": "expert_load_max_frac <= 2/num_experts",
+  "rule": "keep the current default unless another healthy variant beats it by more than tol_nats of val_loss",
+  "chosen_label": "balance_method=aux_loss, load_balance_coef=0.01",
+  "changed_from_default": false,
+  "chosen": {
+    "moe.balance_method": "aux_loss",
+    "moe.load_balance_coef": 0.01
+  },
+  "table": [
+    {
+      "label": "balance_method=aux_loss, load_balance_coef=0.001",
+      "is_current_default": false,
+      "values": {
+        "moe.balance_method": "aux_loss",
+        "moe.load_balance_coef": 0.001
+      },
+      "healthy": true,
+      "val_loss": 9.60994005203247,
+      "val_loss_std": null,
+      "loss_ntp_last": 9.103306770324707,
+      "loss_ntp_step1": 11.797748565673828,
+      "ln_vocab": 11.78350206951907,
+      "router_entropy": 1.3851474046707153,
+      "expert_load_max_frac": 0.4435546934604645,
+      "grad_norm_p99": 1.4508336675167084,
+      "params_total": 9262336,
+      "params_active": 9114880,
+      "tokens_per_second": 131.72572048636943,
+      "num_experts": 4,
+      "ok": true
+    },
+    {
+      "label": "balance_method=aux_loss, load_balance_coef=0.01",
+      "is_current_default": true,
+      "values": {
+        "moe.balance_method": "aux_loss",
+        "moe.load_balance_coef": 0.01
+      },
+      "healthy": true,
+      "val_loss": 9.610428810119629,
+      "val_loss_std": null,
+      "loss_ntp_last": 9.103303241729737,
+      "loss_ntp_step1": 11.797748565673828,
+      "ln_vocab": 11.78350206951907,
+      "router_entropy": 1.386105513572693,
+      "expert_load_max_frac": 0.3268880218267441,
+      "grad_norm_p99": 1.4504243874549867,
+      "params_total": 9262336,
+      "params_active": 9114880,
+      "tokens_per_second": 130.05335282070823,
+      "num_experts": 4,
+      "ok": true
+    },
+    {
+      "label": "balance_method=aux_loss, load_balance_coef=0.1",
+      "is_current_default": false,
+      "values": {
+        "moe.balance_method": "aux_loss",
+        "moe.load_balance_coef": 0.1
+      },
+      "healthy": true,
+      "val_loss": 9.60993242263794,
+      "val_loss_std": null,
+      "loss_ntp_last": 9.101228713989258,
+      "loss_ntp_step1": 11.797748565673828,
+      "ln_vocab": 11.78350206951907,
+      "router_entropy": 1.3861311078071594,
+      "expert_load_max_frac": 0.30820312798023225,
+      "grad_norm_p99": 1.4541688454151154,
+      "params_total": 9262336,
+      "params_active": 9114880,
+      "tokens_per_second": 131.92970533394032,
+      "num_experts": 4,
+      "ok": true
+    },
+    {
+      "label": "balance_method=bias, load_balance_coef=0.01",
+      "is_current_default": false,
+      "values": {
+        "moe.balance_method": "bias",
+        "moe.load_balance_coef": 0.01
+      },
+      "healthy": true,
+      "val_loss": 9.610000610351562,
+      "val_loss_std": null,
+      "loss_ntp_last": 9.103464126586914,
+      "loss_ntp_step1": 11.797748565673828,
+      "ln_vocab": 11.78350206951907,
+      "router_entropy": 1.3720013856887818,
+      "expert_load_max_frac": 0.44134114384651185,
+      "grad_norm_p99": 1.4502997374534607,
+      "params_total": 9262336,
+      "params_active": 9114880,
+      "tokens_per_second": 131.68591486236218,
+      "num_experts": 4,
+      "ok": true
+    },
+    {
+      "label": "balance_method=none, load_balance_coef=0.01",
+      "is_current_default": false,
+      "values": {
+        "moe.balance_method": "none",
+        "moe.load_balance_coef": 0.01
+      },
+      "healthy": true,
+      "val_loss": 9.6103835105896,
+      "val_loss_std": null,
+      "loss_ntp_last": 9.103679656982422,
+      "loss_ntp_step1": 11.797748565673828,
+      "ln_vocab": 11.78350206951907,
+      "router_entropy": 1.3771784067153932,
+      "expert_load_max_frac": 0.4965494841337204,
+      "grad_norm_p99": 1.4501907992362977,
+      "params_total": 9262336,
+      "params_active": 9114880,
+      "tokens_per_second": 132.33625103503712,
+      "num_experts": 4,
+      "ok": true
+    }
+  ]
+}

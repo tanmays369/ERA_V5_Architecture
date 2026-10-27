@@ -1,0 +1,9 @@
+{
+  "id": "tokenizer_vocab",
+  "date": "2026-10-27",
+  "tokenizer": "theschoolofai/BrahmicTokenizer-131K",
+  "how": "max token id + 1 over tokenizer.get_vocab(), measured by harness/prepare_data.py",
+  "chosen": {
+    "model.vocab_size": 131072
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "id": "topk_sweep",
+  "date": "2026-10-27",
+  "config": "configs/small_cpu.yaml",
+  "steps": 100,
+  "seeds": [
+    1234
+  ],
+  "tol_nats": 0.02,
+  "healthy_rule": "expert_load_max_frac <= 2/num_experts",
+  "rule": "keep the current default unless another healthy variant beats it by more than tol_nats of val_loss",
+  "chosen_label": "top_k=2",
+  "changed_from_default": false,
+  "chosen": {
+    "moe.top_k": 2
+  },
+  "table": [
+    {
+      "label": "top_k=1",
+      "is_current_default": false,
+      "values": {
+        "moe.top_k": 1
+      },
+      "healthy": true,
+      "val_loss": 9.610743045806885,
+      "val_loss_std": null,
+      "loss_ntp_last": 9.103278923034669,
+      "loss_ntp_step1": 11.797783851623535,
+      "ln_vocab": 11.78350206951907,
+      "router_entropy": 1.3860875487327575,
+      "expert_load_max_frac": 0.37721354365348814,
+      "grad_norm_p99": 1.4499942111968995,
+      "params_total": 9262336,
+      "params_active": 9041152,
+      "tokens_per_second": 132.50227980550002,
+      "num_experts": 4,
+      "ok": true
+    },
+    {
+      "label": "top_k=2",
+      "is_current_default": true,
+      "values": {
+        "moe.top_k": 2
+      },
+      "healthy": true,
+      "val_loss": 9.610428810119629,
+      "val_loss_std": null,
+      "loss_ntp_last": 9.103303241729737,
+      "loss_ntp_step1": 11.797748565673828,
+      "ln_vocab": 11.78350206951907,
+      "router_entropy": 1.386105513572693,
+      "expert_load_max_frac": 0.3268880218267441,
+      "grad_norm_p99": 1.4504243874549867,
+      "params_total": 9262336,
+      "params_active": 9114880,
+      "tokens_per_second": 130.05335282070823,
+      "num_experts": 4,
+      "ok": true
+    }
+  ]
+}

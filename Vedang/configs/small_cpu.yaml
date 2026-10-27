@@ -1,0 +1,69 @@
+# Team 05 - small_cpu: CPU smoke test and determinism check: about a minute per run.
+# Same settings and sources as config_v0.yaml; only the open sizes (and a few test-rig settings) are filled in.
+# These sizes test the harness, NOT the real model (TSAI gives those 31 Oct).
+
+tokenizer:
+  name_or_path: theschoolofai/BrahmicTokenizer-131K   # src: kronecker-code (embedding reads each token's bytes through a HF tokenizer; this is the course tokenizer)
+
+embedding:
+  embedding_type: kronecker        # src: kronecker-code (KroneckerEmbedding is a drop-in for nn.Embedding); standard is allowed only for comparison
+  kron_mode: dynamic               # src: kronecker-code (dynamic computes vectors per batch; cached would build a vocab x 8192 table, about 4.3 GB at vocab 131072)
+  kron_char_dim: 256               # src: kronecker-code (default: one slot per byte value)
+  kron_pos_dim: 32                 # src: kronecker-code (default: byte positions kept per token)
+  tie_embeddings: false            # src: kronecker-paper (the byte codec cannot be tied to the output matrix)
+
+model:
+  vocab_size: 131072               # src: measurement:tokenizer_vocab (written by prepare_data.py from the tokenizer)
+  d_model: 64                       # src: harness-code (small test size, NOT the real model size)
+  n_layers: 3                       # src: harness-code (small test size, NOT the real model size)
+  n_heads: 4                        # src: harness-code (small test size, NOT the real model size)
+  n_kv_heads: 2                     # src: harness-code (small test size, NOT the real model size)
+  max_seq_len: 256                  # src: harness-code (small test size, NOT the real model size)
+  dense_ffn_hidden_dim: 256         # src: harness-code (small test size, NOT the real model size)
+  norm_type: rmsnorm               # src: harness-code (only RMSNorm is implemented)
+  norm_eps: 1.0e-5                 # src: harness-code (numerical guard inside RMSNorm, not tuned)
+  activation: swiglu               # src: harness-code (only SwiGLU is implemented)
+  rope_theta: 10000.0              # src: harness-code (RoPE base frequency, not tuned)
+  qk_norm: false                   # src: harness-code (optional RMSNorm on queries and keys; off)
+  attn_dropout: 0.0                # src: harness-code (no dropout in short runs)
+  init_std: 0.05                    # src: measurement:init_sweep (step-1 loss should sit at ln(vocab); sweep compares 0.01, 0.02, 0.05)
+
+moe:
+  num_experts: 4                    # src: harness-code (small test size, NOT the real model size)
+  expert_hidden_dim: 128            # src: harness-code (small test size, NOT the real model size)
+  top_k: 2                         # src: measurement:topk_sweep (experts used per token)
+  num_shared_experts: 1             # src: measurement:shared_sweep (always-on experts added to the routed ones)
+  first_k_dense: 0                 # src: measurement:layout_sweep (dense layers before the first MoE layer)
+  moe_layer_freq: 1                # src: measurement:layout_sweep (an MoE layer every N layers after the dense ones)
+  dense_baseline: false            # src: harness-code (true = no MoE layers, FFN as wide as the active experts; plan arm A1)
+  router_type: softmax             # src: measurement:router_sweep (softmax or sigmoid expert scores)
+  normalize_topk_weights: true     # src: measurement:normalize_sweep (renormalise the chosen experts' weights to sum to 1)
+  balance_method: aux_loss         # src: measurement:balance_sweep (aux_loss, bias or none)
+  load_balance_coef: 0.01          # src: measurement:balance_sweep (weight of the balance loss when balance_method is aux_loss)
+  bias_update_rate: 0.001          # src: harness-code (step size of the loss-free balancing bias; used only with balance_method bias)
+  router_z_loss_coef: 0.001        # src: measurement:zloss_sweep (penalty on large router logits; 0 turns it off)
+
+mtp:
+  mtp_depth: 0                      # src: measurement:mtp_sweep (extra future-token heads; 0 turns multi-token prediction off)
+  mtp_loss_coef: 0.3               # src: harness-code (weight of loss_mtp in the total loss)
+  mtp_hidden_mult: 2               # src: harness-code (hidden width of each MTP head = this x d_model)
+
+data:
+  token_file: data/mixed_hi_en_tokens.npy   # src: harness-code (output of harness/prepare_data.py: Hindi + English, equal token share)
+  val_fraction: 0.05               # src: harness-code (last 5% of the token stream is held out)
+
+train:
+  seed: 1234                       # src: harness-code (the value the 31 Oct determinism check uses)
+  steps: 100                        # src: harness-code (small-config test-rig setting)
+  batch_size: 4                     # src: harness-code (small-config test-rig setting)
+  grad_accum_steps: 1               # src: harness-code (small-config test-rig setting)
+  seq_len: 64                       # src: harness-code (small-config test-rig setting)
+  lr: 0.003                         # src: measurement:lr_sweep (peak learning rate; sweep compares 3e-4, 1e-3, 3e-3)
+  min_lr_ratio: 0.3                 # src: measurement:decay_sweep (cosine decays to this fraction of the peak)
+  warmup_steps: 5                   # src: harness-code (small-config test-rig setting)
+  weight_decay: 0.1                # src: measurement:wd_sweep (AdamW decoupled decay on matrices)
+  beta1: 0.9                       # src: harness-code (AdamW momentum, not tuned)
+  beta2: 0.95                      # src: harness-code (AdamW second-moment decay, not tuned)
+  grad_clip: 1.0                   # src: measurement:clip_sweep (global gradient-norm clip)
+  eval_interval: 50                 # src: harness-code (small-config test-rig setting)
+  eval_batches: 2                   # src: harness-code (small-config test-rig setting)

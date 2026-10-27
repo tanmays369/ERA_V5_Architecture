@@ -1,0 +1,82 @@
+{
+  "id": "mtp_sweep",
+  "date": "2026-10-27",
+  "config": "configs/small_cpu.yaml",
+  "steps": 100,
+  "seeds": [
+    1234
+  ],
+  "tol_nats": 0.02,
+  "healthy_rule": "expert_load_max_frac <= 2/num_experts",
+  "rule": "keep the current default unless another healthy variant beats it by more than tol_nats of val_loss",
+  "chosen_label": "mtp_depth=0",
+  "changed_from_default": true,
+  "chosen": {
+    "mtp.mtp_depth": 0
+  },
+  "table": [
+    {
+      "label": "mtp_depth=0",
+      "is_current_default": false,
+      "values": {
+        "mtp.mtp_depth": 0
+      },
+      "healthy": true,
+      "val_loss": 9.521551132202148,
+      "val_loss_std": null,
+      "loss_ntp_last": 8.97765064239502,
+      "loss_ntp_step1": 11.784815788269043,
+      "ln_vocab": 11.78350206951907,
+      "router_entropy": 1.386121153831482,
+      "expert_load_max_frac": 0.33678385317325593,
+      "grad_norm_p99": 1.2045858061313632,
+      "params_total": 9245888,
+      "params_active": 9098432,
+      "tokens_per_second": 269.37027809793284,
+      "num_experts": 4,
+      "ok": true
+    },
+    {
+      "label": "mtp_depth=1",
+      "is_current_default": true,
+      "values": {
+        "mtp.mtp_depth": 1
+      },
+      "healthy": true,
+      "val_loss": 9.610428810119629,
+      "val_loss_std": null,
+      "loss_ntp_last": 9.103303241729737,
+      "loss_ntp_step1": 11.797748565673828,
+      "ln_vocab": 11.78350206951907,
+      "router_entropy": 1.386105513572693,
+      "expert_load_max_frac": 0.3268880218267441,
+      "grad_norm_p99": 1.4504243874549867,
+      "params_total": 9262336,
+      "params_active": 9114880,
+      "tokens_per_second": 130.05335282070823,
+      "num_experts": 4,
+      "ok": true
+    },
+    {
+      "label": "mtp_depth=2",
+      "is_current_default": false,
+      "values": {
+        "mtp.mtp_depth": 2
+      },
+      "healthy": true,
+      "val_loss": 9.600754261016846,
+      "val_loss_std": null,
+      "loss_ntp_last": 9.097396183013917,
+      "loss_ntp_step1": 11.784870147705078,
+      "ln_vocab": 11.78350206951907,
+      "router_entropy": 1.3861156582832337,
+      "expert_load_max_frac": 0.3186197906732559,
+      "grad_norm_p99": 1.453480145931244,
+      "params_total": 9278784,
+      "params_active": 9131328,
+      "tokens_per_second": 87.84966802441284,
+      "num_experts": 4,
+      "ok": true
+    }
+  ]
+}

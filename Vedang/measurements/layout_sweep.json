@@ -1,0 +1,86 @@
+{
+  "id": "layout_sweep",
+  "date": "2026-10-27",
+  "config": "configs/small_cpu.yaml",
+  "steps": 100,
+  "seeds": [
+    1234
+  ],
+  "tol_nats": 0.02,
+  "healthy_rule": "expert_load_max_frac <= 2/num_experts",
+  "rule": "keep the current default unless another healthy variant beats it by more than tol_nats of val_loss",
+  "chosen_label": "first_k_dense=0, moe_layer_freq=1",
+  "changed_from_default": false,
+  "chosen": {
+    "moe.first_k_dense": 0,
+    "moe.moe_layer_freq": 1
+  },
+  "table": [
+    {
+      "label": "first_k_dense=0, moe_layer_freq=1",
+      "is_current_default": true,
+      "values": {
+        "moe.first_k_dense": 0,
+        "moe.moe_layer_freq": 1
+      },
+      "healthy": true,
+      "val_loss": 9.610428810119629,
+      "val_loss_std": null,
+      "loss_ntp_last": 9.103303241729737,
+      "loss_ntp_step1": 11.797748565673828,
+      "ln_vocab": 11.78350206951907,
+      "router_entropy": 1.386105513572693,
+      "expert_load_max_frac": 0.3268880218267441,
+      "grad_norm_p99": 1.4504243874549867,
+      "params_total": 9262336,
+      "params_active": 9114880,
+      "tokens_per_second": 130.05335282070823,
+      "num_experts": 4,
+      "ok": true
+    },
+    {
+      "label": "first_k_dense=1, moe_layer_freq=1",
+      "is_current_default": false,
+      "values": {
+        "moe.first_k_dense": 1,
+        "moe.moe_layer_freq": 1
+      },
+      "healthy": true,
+      "val_loss": 9.606996536254883,
+      "val_loss_std": null,
+      "loss_ntp_last": 9.110110187530518,
+      "loss_ntp_step1": 11.788678169250488,
+      "ln_vocab": 11.78350206951907,
+      "router_entropy": 1.3861792802810669,
+      "expert_load_max_frac": 0.33369140625,
+      "grad_norm_p99": 1.4268247556686402,
+      "params_total": 9212928,
+      "params_active": 9114624,
+      "tokens_per_second": 133.04794991228675,
+      "num_experts": 4,
+      "ok": true
+    },
+    {
+      "label": "first_k_dense=0, moe_layer_freq=2",
+      "is_current_default": false,
+      "values": {
+        "moe.first_k_dense": 0,
+        "moe.moe_layer_freq": 2
+      },
+      "healthy": true,
+      "val_loss": 9.605155944824219,
+      "val_loss_std": null,
+      "loss_ntp_last": 9.110510158538819,
+      "loss_ntp_step1": 11.78915023803711,
+      "ln_vocab": 11.78350206951907,
+      "router_entropy": 1.3861212253570556,
+      "expert_load_max_frac": 0.328125,
+      "grad_norm_p99": 1.4337101876735687,
+      "params_total": 9212928,
+      "params_active": 9114624,
+      "tokens_per_second": 132.5565611392084,
+      "num_experts": 4,
+      "ok": true
+    }
+  ]
+}

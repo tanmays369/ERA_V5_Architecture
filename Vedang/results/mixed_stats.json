@@ -1,0 +1,22 @@
+{
+  "tokenizer": "theschoolofai/BrahmicTokenizer-131K",
+  "vocab": 131072,
+  "sources": {
+    "hi": {
+      "docs": 288,
+      "tokens": 305280,
+      "chars": 908897,
+      "synthetic": false,
+      "chars_per_token": 2.977
+    },
+    "en": {
+      "docs": 368,
+      "tokens": 304245,
+      "chars": 1386070,
+      "synthetic": false,
+      "chars_per_token": 4.556
+    }
+  },
+  "total_tokens": 609525,
+  "any_synthetic": false
+}
