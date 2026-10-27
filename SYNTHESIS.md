@@ -21,7 +21,3 @@ Winning source means the strongest reviewed contribution for this component, not
 | Distributed research | main/Revant9aa4fcf/parallel.py/train.py/optim.py | Only original teammate code with actual TP/PP/DP/ZeRO1 matrix and recorded CUDA evidence | Udit broad distributed/ZeRO3 schema and local separate Kaggle DDP evidence inform future adapter | Not silently merged/certified without Linux multi-GPU testing; Windows NCCL failure is an environment limit, not evidence the Linux code is broken |
 | Experiment plan | main/Revant9aa4fcf/experiments/plan_v0.md | Noise floor, matched active compute, paired seeds, implementation prerequisites and actual timing provenance | Udit operational/KV/muP/curriculum/XAI; Deepjyoti MTP/sequence aux; Shivanshu smoke gates | Unified42 nonredundant arms, exact G8 names, quantitative pass bars and provisional GPU-h; READY vs BLOCKED explicit; TSAI approval pending |
 
-Contributors and exact source ownership are also listed in CONTRIBUTORS.md. Baseline configuration source comments remain hypotheses or instructor requirements as labeled; none of the synthesis promotes a teammate's experimental number to a TSAI-approved production value.
-
-
-Reversibility contract update (27 Oct): see REVERSIBILITY.md. Midpoint is represented as the instructor-accepted target, disabled in execution pending approved equations/inverse/backward. This adds12 sourced settings and the blocked REV-1 experiment; it is not an implementation of reversible training. Verification provenance before and after this additive update is explicitly separated.
