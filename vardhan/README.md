@@ -45,7 +45,11 @@ rather than a defect** are reported as `[note]`, never as a failure:
 - a `null` whose source explains what it is waiting for — that is a declared
   open size, not a missing value;
 - metric names that differ from the six G8 was promised — reported as a
-  mapping, because the names were a Tuesday handoff, not a Saturday gate item.
+  mapping, because the names were a Tuesday handoff, not a Saturday gate item;
+- a folder with no config **and** no run evidence at all — that is a folder
+  holding something other than a submission, so `--all` marks it `-` rather
+  than `INCOMPLETE`. This folder is one of them. A folder that has a config but
+  no runs is still `INCOMPLETE`, because that one really is an unmet gate.
 
 This matters. The first version of this tool failed Vedang and Revant for
 "no source" when their sources were simply in another file, and told Udit all

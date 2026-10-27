@@ -261,11 +261,20 @@ def check_metrics(run_dir: Path):
 
 # --------------------------------------------------------------------- report
 
-def verify(root: Path) -> bool:
+def verify(root: Path) -> str:
+    """Return "pass", "incomplete", or "empty" (the folder is not a submission)."""
     print(f"\n=== {root.name} " + "=" * max(0, 60 - len(root.name)))
     results, notes = [], []
 
     configs = find_configs(root)
+    _, loose_loss = find_run_pairs(root)
+    if not configs and not loose_loss:
+        # Nothing to check: no config and no run evidence anywhere. That is a
+        # folder holding something other than a Gate-1 submission - tooling,
+        # notes - not a submission that fails the gate. Saying FAIL here would
+        # be the same misreport this tool exists to avoid.
+        print("  [skip] no config and no run evidence - not a Gate-1 submission")
+        return "empty"
     if not configs:
         results.append(("a config file is present", False, "none found"))
     for c in configs:
@@ -309,7 +318,7 @@ def verify(root: Path) -> bool:
         print(f"  [note] {note}")
     passed = all(ok for _, ok, _ in results)
     print(f"  -> {'GATE 1 CHECKS PASS' if passed else 'GATE 1 CHECKS INCOMPLETE'}")
-    return passed
+    return "pass" if passed else "incomplete"
 
 
 def main():
@@ -317,16 +326,21 @@ def main():
     ap.add_argument("folder", type=Path)
     ap.add_argument("--all", action="store_true", help="verify every member folder under FOLDER")
     a = ap.parse_args()
+    # ".." and "." carry no folder name to print, so work from the real path.
+    a.folder = a.folder.resolve()
 
     if a.all:
         members = [p for p in sorted(a.folder.iterdir())
                    if p.is_dir() and not p.name.startswith((".", "_"))]
         results = {m.name: verify(m) for m in members}
         print("\n" + "=" * 68)
+        label = {"pass": "PASS      ", "incomplete": "INCOMPLETE",
+                 "empty": "-         "}
         for k, v in results.items():
-            print(f"  {'PASS' if v else 'INCOMPLETE'}  {k}")
+            suffix = "  (no Gate-1 submission in this folder)" if v == "empty" else ""
+            print(f"  {label[v]}  {k}{suffix}")
         return 0
-    return 0 if verify(a.folder) else 1
+    return 0 if verify(a.folder) == "pass" else 1
 
 
 if __name__ == "__main__":
