@@ -24,18 +24,3 @@ real file in `measurements/` whose chosen value equals the default in the config
 | `measurement:mtp_sweep` | mtp.mtp_depth | `--only mtp_sweep` |
 | `harness-code` | norm and activation choices, RoPE base, dropout, bias update rate, MTP loss weight and width, data and run-length settings, Adam betas, seed | read `harness/train.py`. These are fixed implementation choices or test-rig settings, not performance claims. The checker lists them so the team can confirm at the call that this counts as a source |
 | `TBD_by_TSAI_31Oct` | the 8 sizes | TSAI gives them on 31 Oct |
-
-## Order of work
-
-1. `python harness/prepare_data.py` (real tokenizer and data; writes `tokenizer_vocab`).
-2. `python harness/sweep.py --config configs/small_cpu.yaml --all --steps 100` (or `--config configs/small_colab.yaml` on a GPU).
-3. `python harness/sweep.py --apply configs/config_v0.yaml configs/small_cpu.yaml configs/small_colab.yaml`
-4. `python harness/check_config.py configs/config_v0.yaml --strict` (only the 8 TSAI sizes should remain).
-
-## Background, NOT a source
-
-While choosing the sweep grids I looked at what other open MoE models and small-model recipes use (read 26 Oct): an auxiliary
-balance coefficient of 0.01 and a z-loss of 0.001 are the common values; small models use a higher peak learning rate than
-large ones (1e-3 for models under about 100M parameters); recent large MoE configs renormalise the top-k weights while some
-earlier ones do not. That is why the grids are what they are. None of it is cited in the config, because the team lead's rule
-allows only Kronecker code, the Kronecker paper, or our own measurements as sources.
