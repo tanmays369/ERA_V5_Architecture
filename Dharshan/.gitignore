@@ -1,0 +1,7 @@
+# never commit data, checkpoints or scratch runs
+*.parquet
+*.pt
+*.tmp
+__pycache__/
+runs/
+work/

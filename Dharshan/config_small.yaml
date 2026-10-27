@@ -1,0 +1,94 @@
+# Name: dharshan
+# Axiom email: dharshanthaigu@gmail.com
+# Pack: ind-ta-fw2
+# Small config: the file G6 gets. It is NOT config_v0.yaml. It is self-contained (no inheritance) and has tiny sizes.
+# Same keys and tags as config_v0.yaml; the values that are open there are tiny test values here. Only the KE2 shape stays open.
+# Check it with: python harness/check_config.py configs/config_small.yaml
+general:
+  seed: 1234                    # [admin] lead brief: two runs with seed 1234 must give the same loss at every step
+  deterministic: true           # [admin] same brief; train.py switches on deterministic algorithms
+  num_threads: 1                # [ours] one CPU thread so reductions run in a fixed order; hypothesis that this is needed for bit-equal CPU runs
+tokenizer:
+  name: theschoolofai/BrahmicTokenizer-131K   # [admin] G6 decision of 25 Oct as reported by teammates; lead to confirm
+  url: https://raw.githubusercontent.com/theschoolofai/BrahmicTokenizer-131K/7dfcf398172c825c6689ad578e8b484ca5f57bc9/tokenizer.json   # [admin] pinned commit 7dfcf39 as reported by teammates (G6 answer, 25 Oct); I have not yet checked it against the repo HEAD
+  sha256: 01d968a7970b029c071b29f060abf6104b66168dedf2ff3b1a0290a545739fff   # [ours] same value in three teammates' configs; to verify: hash tokenizer.json at the pinned commit (data.py also checks it on download)
+  vocab_size: 131072            # [ours] same value in teammates' configs; to verify: count model.vocab in tokenizer.json (build_byte_buffer also checks it)
+  eos_id: 36                    # [ours] same value in teammates' configs; to verify: id of <|end_of_text|> in added_tokens
+embedding:
+  type: kronecker               # [KE] README: fixed byte codec plus one trainable projection; lead: Kronecker embeddings stay in
+  char_dim: 256                 # [KE] default in KroneckerEmbedding (src/kronecker_embeddings/embedding.py, commit d07cb54)
+  pos_dim: 32                   # [KE] default; README calls pos_dim 32 (D = 8192) the production setting
+  mode: dynamic                 # [KE] default; README: bit-identical to cached mode, 4.5 MB buffer at V = 131K
+  projection_init: normal       # [KE] default
+  length_normalize: true        # [KE] default in KroneckerEmbedding: scale the codec by 1/sqrt(token length)
+  z_normalize: true             # [KE] default in KroneckerEmbedding: per-token z-norm of the codec before the projection
+  weight_decay: 0.0             # [ours] hypothesis: no decay on the projection, the only trainable embedding weight; arm KE-2 tests it
+  ke2_output_shape: open        # [open] G4, Tue 27 Oct
+model:
+  n_layers: 2                     # [ours] tiny test value so the harness runs on a laptop, Colab or Kaggle; not a V5 setting
+  d_model: 64                     # [ours] tiny test value so the harness runs on a laptop, Colab or Kaggle; not a V5 setting
+  n_heads: 4                      # [ours] tiny test value so the harness runs on a laptop, Colab or Kaggle; not a V5 setting
+  n_kv_heads: 2                   # [ours] tiny test value so the harness runs on a laptop, Colab or Kaggle; not a V5 setting
+  d_ff: 128                       # [ours] tiny test value so the harness runs on a laptop, Colab or Kaggle; not a V5 setting
+  norm_position: pre            # [ours] pre-norm is the usual choice for deep decoders; arm AR-1 compares post-norm
+  norm_eps: 1.0e-6              # [ours] common default, not tuned
+  rope_theta: 10000             # [ours] base of the original RoPE; the final value depends on context length, which is open
+  qk_norm: true                 # [ours] hypothesis: keeps attention logits small; arm AR-2 tests it
+  init_std: 0.02                # [ours] common default for linear layers
+  ffn: swiglu                   # [ours] single implemented option; train.py stops on any other value
+  norm: rmsnorm                 # [ours] single implemented option
+  bias: false                   # [ours] single implemented option (no bias terms)
+  dropout: 0.0                  # [ours] single implemented option (no dropout)
+  tie_embeddings: false         # [KE] the input side has no vocab x d table, only a projection, so tying is not possible
+attention:
+  window: 0                     # [ours] 0 = full causal attention; N = each token sees the last N tokens; arm AR-3
+  global_every: 0               # [ours] 0 = every layer uses the window; N = every Nth layer is full attention
+moe:
+  enabled: true                 # [admin] lead brief: the harness is a tiny MoE
+  num_experts: 4                  # [ours] tiny test value so the harness runs on a laptop, Colab or Kaggle; not a V5 setting
+  top_k: 2                        # [ours] tiny test value so the harness runs on a laptop, Colab or Kaggle; not a V5 setting
+  shared_experts: 0             # [ours] number of always-on experts; arm MO-2 tests 1
+  router_sharing: none          # [ours] none = one router per layer; all_layers = one router matrix reused by every MoE layer; arm MO-4
+  router_scoring: sigmoid       # [ours] single implemented option; weights come from the raw scores, normalised over the top-k
+  router_dtype: float32         # [ours] single implemented option; the router is computed in fp32
+  balancing: aux_free_bias      # [ours] single implemented option; a bias that only affects which experts are picked (idea: loss-free balancing, to verify)
+  bias_update_speed: 0.001      # [ours] size of each bias step; arm MO-3 tests balancing off
+  seq_aux_loss_coef: 0.0001     # [ours] small per-sequence balance loss next to the bias
+  dropless: true                # [ours] single implemented option; no token is dropped
+head:
+  z_loss_coef: 0.0001           # [ours] penalty on the squared log-sum-exp of the logits
+  mtp_heads: 1                  # [admin] the lead lists loss_mtp among the six metrics; 1 = one extra head predicting t+2, 0 = off
+  mtp_loss_weight: 0.3          # [ours] weight of loss_mtp in the total loss
+optimizer:
+  matrices_2d: muon             # [ours] reported by teammates as the G6 answer of 25 Oct (Muon on 2D weights); lead to confirm; arm OP-1
+  other_params: adamw           # [ours] single implemented option
+  lr_muon: 0.02                   # [ours] tiny test value so the harness runs on a laptop, Colab or Kaggle; not a V5 setting
+  lr_adamw: 0.003                 # [ours] tiny test value so the harness runs on a laptop, Colab or Kaggle; not a V5 setting
+  weight_decay: 0.0               # [ours] tiny test value so the harness runs on a laptop, Colab or Kaggle; not a V5 setting
+  betas: [0.9, 0.95]              # [ours] tiny test value so the harness runs on a laptop, Colab or Kaggle; not a V5 setting
+  grad_clip: 1.0                # [ours] common default
+  muon_momentum: 0.95           # [ours] common Muon default, to verify
+  muon_ns_steps: 5              # [ours] number of Newton-Schulz steps, common default, to verify
+schedule:
+  type: wsd                     # [ours] single implemented option: warm-up, flat, linear decay
+  warmup_frac: 0.1                # [ours] tiny test value so the harness runs on a laptop, Colab or Kaggle; not a V5 setting
+  decay_frac: 0.3                 # [ours] tiny test value so the harness runs on a laptop, Colab or Kaggle; not a V5 setting
+  min_lr_frac: 0.0              # [ours] the last step runs at lr 0
+tokens:
+  seq_len: 64                     # [ours] tiny test value so the harness runs on a laptop, Colab or Kaggle; not a V5 setting
+  global_batch_seqs: 8            # [ours] tiny test value so the harness runs on a laptop, Colab or Kaggle; not a V5 setting
+  micro_batch_seqs: 4             # [ours] tiny test value so the harness runs on a laptop, Colab or Kaggle; not a V5 setting
+  train_steps: 60                 # [ours] tiny test value so the harness runs on a laptop, Colab or Kaggle; not a V5 setting
+data:
+  source: synthetic               # [ours] tiny test value so the harness runs on a laptop, Colab or Kaggle; not a V5 setting
+  paths: []                       # [ours] tiny test value so the harness runs on a laptop, Colab or Kaggle; not a V5 setting
+  weights: equal                  # [ours] tiny test value so the harness runs on a laptop, Colab or Kaggle; not a V5 setting
+  text_column: text             # [ours] column name in the pack parquet files
+  val_frac: 0.1                 # [ours] last 10% of each source is held out
+  val_windows_per_source: 8     # [ours] same number of held-out windows per source, so sources count equally
+logging:
+  eval_every: 20                  # [ours] tiny test value so the harness runs on a laptop, Colab or Kaggle; not a V5 setting
+precision:
+  dtype: float32                # [ours] single implemented option; a bf16 arm needs code first
+safety:
+  stop_on_nan: true             # [admin] lead check: the loss must not go NaN; the run stops and writes NAN_REPORT.json
